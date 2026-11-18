@@ -1,5 +1,7 @@
 # Proyecto Final: Agente Comercial Autónomo con RAG en n8n — Estudio "Shaseki"
 
+https://itherea.github.io/AI-Automation-Final/
+
 **Autor:** Ariel Hernán Contini  
 **Arquitectura:** n8n + WhatsApp Business Cloud API + Google Drive + Groq Cloud (LPU) + Cohere Embeddings  
 
