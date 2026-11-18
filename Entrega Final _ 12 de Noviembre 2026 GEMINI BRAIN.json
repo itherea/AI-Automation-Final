@@ -1,0 +1,459 @@
+{
+  "name": "Entrega Final | 12 de Noviembre 2026 GEMINI BRAIN",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        -1904
+      ],
+      "id": "4ba193bc-b4ad-4104-ab41-d0efe4cc5f9c",
+      "name": "GO!"
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "id": "befd5d3a-f2e7-40f4-8663-ca2ec2bb2a56",
+      "name": "Cohere it!",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -1536
+      ],
+      "credentials": {
+        "cohereApi": {
+          "id": "9q3uareNqE2rA9UG",
+          "name": "Cohere account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [
+        -832,
+        -1808
+      ],
+      "id": "2c74bb7a-780c-4d53-beaf-fd7ca8b7577c",
+      "name": "Tell me what you see"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        },
+        "clearStore": true
+      },
+      "id": "f88d5dfd-3af2-429c-af75-e19e651d2f36",
+      "name": "Vectores",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        -1808
+      ]
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {}
+      },
+      "id": "13b79b0b-2729-46e1-9319-daac01c79e3e",
+      "name": "DATALOADER",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        -1536
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Mensaje Entrante').item.json.messages[0].from }}_v8",
+        "contextWindowLength": 12
+      },
+      "id": "ade8425d-a172-4486-b16f-313a6766ea69",
+      "name": "Don't you forget about me",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -592,
+        -720
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "embed-multilingual-v3.0"
+      },
+      "id": "ad1140ae-b94c-4257-8e26-e57be800848c",
+      "name": "Cohere it!1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -624
+      ],
+      "credentials": {
+        "cohereApi": {
+          "id": "9q3uareNqE2rA9UG",
+          "name": "Cohere account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "id": "4b3fba69-22d9-40a1-8bc4-54f9e7941c2d",
+      "name": "Mensaje Entrante",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1520,
+        -1232
+      ],
+      "webhookId": "43176144-ddec-4716-aa4c-938a447dc1c5",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "U4M7tTgTn5lwSgLL",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "75aab030-410c-4fcb-8a39-737e8f7b18c1",
+              "leftValue": "={{ $json.messages[0].text.body }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -1104,
+        -1152
+      ],
+      "id": "bfb0672f-4ad5-499d-a879-2d86ce7607d9",
+      "name": "valido si es texto"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "Rol: Eres el Asistente Comercial y Ejecutivo de Cuentas del estudio de diseño \"Shaseki\". Atiendes a clientes y prospectos a través de WhatsApp Business.\n\nREGLA CRÍTICA DE EJECUCIÓN (OBLIGATORIA):\nAntes de redactar cualquier respuesta sobre precios, aranceles, servicios, anticipos o condiciones de trabajo, DEBES INVOCAR SIEMPRE la herramienta \"RAG\" enviando como query el nombre del servicio consultado por el usuario. NUNCA respondas de memoria ni asumas que no tienes la información sin haber ejecutado primero la herramienta \"RAG\".\n\nTono y Estilo:\n-- Mantén un tono estrictamente profesional, cordial y ejecutivo: saluda brevemente y presenta los valores dentro de una oración amable antes del desglose (nunca respondas solo con datos sueltos tipo telegrama).\n- Formato nativo de WhatsApp: Para hacer negritas, usa ESTRICTAMENTE un solo asterisco por lado (ejemplo correcto: *Presupuesto* / ejemplo prohibido: **Presupuesto**). Para listas, usa únicamente guiones (-) sin asteriscos y saltos de línea limpios.\n\nLógica de Cotización según Tipo de Cliente (Empresa, PyME, Particular):\nEl tarifario de Shaseki estructura los aranceles en tres categorías de cliente: *Empresa* (Categoría A), *PyME* (Categoría B) y *Particular* (Categoría C), además de valores generales como *Hora de Trabajo*, *Adaptaciones* (50%), *Gremio* (20%) y *Anticipo* (30%).\n1. Si el usuario especifica su tipo de perfil en la consulta (ej. \"Soy una PyME\", \"Es para mi empresa\" o \"Soy un cliente particular\"), infórmale directamente el precio exacto correspondiente a su categoría.\n2. Si el usuario consulta el precio de un servicio pero NO aclara qué tipo de cliente es, preséntale de forma ordenada los 3 valores disponibles (*Empresa*, *PyME* y *Particular*) para ese trabajo y pregúntale cordialmente al final en cuál de las categorías se encuadra su proyecto para afinar el presupuesto.\n\n\n\nRestricciones y Reglas de Negocio:\n1. Responde basándote ESTRICTAMENTE en los fragmentos que te devuelva la herramienta \"RAG\".\n2. NO inventes ni recalcules tarifas ni condiciones fuera de lo estipulado en el tarifario.\n3. Protocolo de Fallback (Fuera de alcance): Si tras ejecutar la herramienta \"RAG\" el servicio o dato solicitado no figura en los fragmentos devueltos, responde EXACTAMENTE con este mensaje profesional:\n\"Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.\""
+        }
+      },
+      "id": "8e4de870-bc76-47ea-b52b-23f0be490db2",
+      "name": "Shaseki Bot",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -736,
+        -1040
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Busca en el tarifario oficial de servicios creativos y digitales del estudio Shaseki. Contiene los precios en pesos (ARS) discriminados por tipo de cliente (Empresa, PyME y Particular) para Identidad, Papelería, Publicidad, Community Manager, Editorial, Señalización, Web, Audiovisual, Sonido, Fotografía, Textil, Promoción, Ilustración, Packaging y Diseño Industrial, así como el valor de la Hora de Trabajo, Adaptaciones, Gremio y Anticipo. Úsalo siempre para consultar precios de cualquier trabajo o servicio.",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        },
+        "topK": 6
+      },
+      "id": "6bf8c785-8a1f-4252-b59a-33a50dcdc2df",
+      "name": "RAG",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        -352,
+        -800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=1431351056730761",
+        "recipientPhoneNumber": "=542805123245",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "id": "c32b7586-978b-431e-8345-29fd950c6dbb",
+      "name": "La Respuesta",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        -1168
+      ],
+      "webhookId": "ab49daa2-61ed-4699-b57e-8c3bb49238ad",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "peq4S8LR13LTyF3j",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=1431351056730761",
+        "recipientPhoneNumber": "=542805123245",
+        "textBody": "=¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto. Por favor, escríbenos tu consulta para poder ayudarte.",
+        "additionalFields": {}
+      },
+      "id": "2f96903c-7819-45ec-8f17-cba45668b12e",
+      "name": "Si nos envían un sticker, GIF o Imagen",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        -816
+      ],
+      "webhookId": "2d768ed2-5931-435d-a96e-eb34cf72806a",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "peq4S8LR13LTyF3j",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -768,
+        -752
+      ],
+      "id": "a3c250da-6591-48bf-9fd2-fa522503e86a",
+      "name": "Gemini Brain",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "HnKOXJ5QrAPOyGcv",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1NOlj3dTn75lZrJsntIemYZpsZWchwPaK",
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1136,
+        -1728
+      ],
+      "id": "730147b4-fab0-481f-9b0f-ec0a176da253",
+      "name": "Look into   your book of rules",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "UTVZCo69fqJwfFe2",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GO!": {
+      "main": [
+        [
+          {
+            "node": "Look into   your book of rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cohere it!": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Vectores",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tell me what you see": {
+      "main": [
+        [
+          {
+            "node": "Vectores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DATALOADER": {
+      "ai_document": [
+        [
+          {
+            "node": "Vectores",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Don't you forget about me": {
+      "ai_memory": [
+        [
+          {
+            "node": "Shaseki Bot",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cohere it!1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "RAG",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Entrante": {
+      "main": [
+        [
+          {
+            "node": "valido si es texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valido si es texto": {
+      "main": [
+        [
+          {
+            "node": "Shaseki Bot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Si nos envían un sticker, GIF o Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shaseki Bot": {
+      "main": [
+        [
+          {
+            "node": "La Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG": {
+      "ai_tool": [
+        [
+          {
+            "node": "Shaseki Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Brain": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Shaseki Bot",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look into   your book of rules": {
+      "main": [
+        [
+          {
+            "node": "Tell me what you see",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fa1c7036-1c56-4106-92da-0d55df309f25",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e4e8230a1cab362e3d549b93d7e9e2dfa39f236d0ec67a900a5cd6dc4b2b5f9c"
+  },
+  "nodeGroups": [],
+  "id": "SbvzLAO6uW4OSeWz",
+  "tags": []
+}
