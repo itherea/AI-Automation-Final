@@ -4,10 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SHASEKI — Proyecto colectivo de agentes para administración de datos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     /* =====================================================================
        OMARCHY DARK // MINIMAL BLACK & SUBTLE GLASS THEME
-       Diseño descansado, espaciado generoso, cero ruido visual.
+       Títulos en Unbounded + Todo el texto operativo en fuente de consola.
        ===================================================================== */
     :root {
       --bg-base: #08080a;
@@ -26,8 +29,8 @@
       --wa-bg: #0b141a;
       --wa-in: #1f2c34;
       --wa-out: #005c4b;
+      --font-display: 'Unbounded', sans-serif;
       --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
     }
 
     * {
@@ -40,9 +43,9 @@
       scroll-behavior: smooth;
       background-color: var(--bg-base);
       color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 15px;
-      line-height: 1.6;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -53,6 +56,11 @@
         radial-gradient(circle at 80% 100%, rgba(52, 211, 153, 0.025) 0%, transparent 45%);
       min-height: 100vh;
       overflow-x: hidden;
+      font-family: var(--font-mono);
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: var(--font-display);
     }
 
     ::-webkit-scrollbar {
@@ -207,7 +215,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: var(--text-secondary);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
     .win-dots {
@@ -269,18 +281,18 @@
     }
 
     .hero-title {
-      font-family: var(--font-mono);
-      font-size: clamp(34px, 5.5vw, 56px);
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5.2vw, 54px);
       font-weight: 800;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.03em;
       line-height: 1.08;
       color: var(--text-primary);
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .hero-title .title-slash {
       color: var(--accent-cyan);
-      font-weight: 400;
+      font-weight: 500;
     }
 
     .hero-title .title-accent {
@@ -291,18 +303,20 @@
     }
 
     .hero-collective {
-      font-family: var(--font-mono);
-      font-size: 13.5px;
+      font-family: var(--font-display);
+      font-size: clamp(13px, 1.6vw, 16px);
+      font-weight: 500;
       color: var(--text-primary);
-      letter-spacing: 0.02em;
-      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
     }
 
     .hero-sub {
-      font-size: 15.5px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
       color: var(--text-secondary);
-      max-width: 700px;
-      margin-bottom: 22px;
+      max-width: 720px;
+      margin-bottom: 24px;
     }
 
     .stack-pills {
@@ -352,20 +366,23 @@
     }
 
     .kpi-num {
-      font-family: var(--font-mono);
-      font-size: 26px;
+      font-family: var(--font-display);
+      font-size: 22px;
       font-weight: 700;
+      letter-spacing: -0.02em;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .kpi-foot {
-      font-size: 13px;
+      font-family: var(--font-mono);
+      font-size: 12px;
       color: var(--text-secondary);
     }
 
     .roi-limit-note {
-      font-size: 13.5px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
       color: var(--text-secondary);
       padding: 16px 20px;
       border-radius: 8px;
@@ -477,8 +494,8 @@
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 12px;
+      font-family: var(--font-display);
+      font-size: 11px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -498,8 +515,9 @@
       max-width: 85%;
       padding: 10px 13px;
       border-radius: 8px;
-      font-size: 13.5px;
-      line-height: 1.45;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.5;
       color: #e9edef;
     }
 
@@ -557,15 +575,19 @@
     .clean-list li {
       padding-left: 16px;
       border-left: 2px solid var(--border-focus);
-      font-size: 13.5px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
       color: var(--text-secondary);
     }
 
     .clean-list strong {
+      font-family: var(--font-display);
       color: var(--text-primary);
       display: block;
-      margin-bottom: 2px;
-      font-size: 14px;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
     .sim-box {
@@ -577,110 +599,11 @@
       flex-direction: column;
       gap: 20px;
     }
-
-    .meter-track {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 8px;
+    .glass-window {
+      scroll-margin-top: 76px;
     }
-
-    .meter-fill {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.3s ease, background-color 0.3s ease;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--text-primary);
-      cursor: pointer;
-    }
-
-    /* ==================== [04] PROMPT & ARTIFACTS ==================== */
-    .prompt-pre {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 18px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 1.55;
-      color: var(--text-secondary);
-      max-height: 250px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-    }
-
-    .dl-btn {
-      width: 100%;
-      background: var(--glass-sub);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      padding: 14px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: all 0.2s ease;
-    }
-
-    .dl-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--border-focus);
-    }
-
-    .dl-btn-primary {
-      background: rgba(52, 211, 153, 0.08);
-      border-color: rgba(52, 211, 153, 0.28);
-      color: var(--accent-green);
-    }
-
-    .dl-btn-primary:hover {
-      background: rgba(52, 211, 153, 0.14);
-      border-color: var(--accent-green);
-    }
-
-    /* ==================== FOOTER & TOAST ==================== */
-    .footer-minimal {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 24px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 12px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--text-muted);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #141418;
-      border: 1px solid var(--border-focus);
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      opacity: 0;
-      transform: translateY(10px);
-      pointer-events: none;
-      transition: all 0.2s ease;
-      z-index: 200;
-    }
-    .toast.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .hero-block {
+      scroll-margin-top: 76px;
     }
   </style>
 </head>
@@ -760,9 +683,9 @@
       <div class="win-header">
         <div class="win-title">
           <span class="win-dots"><span></span><span></span><span></span></span>
-          <span>[01] n8n-architecture // dos fuentes de entrada + rag + control de errores</span>
+          <h2>[01] n8n-architecture // dos fuentes + rag</h2>
         </div>
-        <span>Haz clic en un nodo para ver su función</span>
+        <span>Haz clic en un nodo para inspeccionar</span>
       </div>
 
       <div class="win-body">
@@ -871,10 +794,10 @@
 
         <div class="inspector-bar">
           <div>
-            <div id="node-name" style="font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 4px;">
+            <h3 id="node-name" style="font-size: 13px; font-weight: 600; color: var(--accent-cyan); margin-bottom: 5px;">
               Mensaje Entrante (whatsAppTrigger)
-            </div>
-            <div id="node-detail" style="font-size: 13.5px; color: var(--text-secondary);">
+            </h3>
+            <div id="node-detail" style="font-size: 12.5px; color: var(--text-secondary);">
               Fuente de entrada #2: captura eventos de mensajes desde WhatsApp Business Cloud y extrae el cuerpo de texto y el ID de sesión.
             </div>
           </div>
@@ -890,7 +813,7 @@
       <div class="win-header">
         <div class="win-title">
           <span class="win-dots"><span></span><span></span><span></span></span>
-          <span>[02] whatsapp-cloud // validación funcional de rag, fallback y errores</span>
+          <h2>[02] whatsapp-cloud // rag, fallback y errores</h2>
         </div>
         <span>4 casos de prueba</span>
       </div>
@@ -903,8 +826,8 @@
               <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="wa-badge">SB</div>
                 <div>
-                  <div style="font-size: 13.5px; font-weight: 600; color: #f4f4f5;">Shaseki Bot</div>
-                  <div id="wa-status" style="font-size: 11px; color: var(--accent-green);">Cuenta de empresa · en línea</div>
+                  <h3 style="font-size: 12.5px; font-weight: 600; color: #f4f4f5;">Shaseki Bot</h3>
+                  <div id="wa-status" style="font-size: 10.5px; color: var(--accent-green);">Cuenta de empresa · en línea</div>
                 </div>
               </div>
               <span style="font-family: var(--font-mono); font-size: 10.5px; color: var(--text-muted);">Meta Cloud API</span>
@@ -962,7 +885,7 @@
       <div class="win-header">
         <div class="win-title">
           <span class="win-dots"><span></span><span></span><span></span></span>
-          <span>[03] architecture-decisions &amp; benchmark-10x</span>
+          <h2>[03] decisions &amp; benchmark-10x</h2>
         </div>
         <span>Modelo · Privacidad · Escalabilidad</span>
       </div>
@@ -999,7 +922,7 @@
               <input id="sim-range" type="range" min="40" max="400" step="40" value="400" oninput="renderSim()" />
             </div>
 
-            <label style="display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-secondary); cursor: pointer;">
+            <label style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-secondary); cursor: pointer;">
               <span>Activar Caché Semántica (60% hits) + Rate Limiting</span>
               <input id="sim-cache" type="checkbox" checked onchange="renderSim()" style="width: 16px; height: 16px; accent-color: var(--accent-green);" />
             </label>
@@ -1037,7 +960,7 @@
       <div class="win-header">
         <div class="win-title">
           <span class="win-dots"><span></span><span></span><span></span></span>
-          <span>[04] system-prompt &amp; repository-artifacts</span>
+          <h2>[04] system-prompt &amp; artifacts</h2>
         </div>
         <span>Archivos anonimizados listos para GitHub</span>
       </div>
@@ -1046,7 +969,7 @@
         <div class="split-2">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">SYSTEM PROMPT (SHASEKI BOT)</span>
+              <h3 style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">SYSTEM PROMPT (SHASEKI BOT)</h3>
               <button class="btn-ghost" onclick="copyPrompt()">Copiar texto</button>
             </div>
             <pre id="prompt-source" class="prompt-pre">Rol: Eres el Asistente Comercial y Ejecutivo de Cuentas del estudio de diseño "Shaseki". Atiendes a clientes y prospectos a través de WhatsApp Business.
@@ -1071,9 +994,9 @@ Si tras ejecutar "RAG" el dato solicitado no figura en el tarifario, responde EX
 
           <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 14px;">
             <div>
-              <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+              <h3 style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;">
                 DESCARGAR ARTEFACTOS DE ENTREGA
-              </div>
+              </h3>
               <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="dl-btn dl-btn-primary" onclick="downloadWorkflowJSON()">
                   <span>workflow-agente-rag.json</span>
