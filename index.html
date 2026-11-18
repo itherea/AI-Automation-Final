@@ -1,830 +1,1222 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SHASEKI BOT // RAG AUTOMATION SYSTEM — Omarchy OS Dashboard</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- JetBrains Mono Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            omarchy: {
-              bg: '#0b0e14',
-              panel: '#11151c',
-              panelAlt: '#161b24',
-              border: '#242b38',
-              text: '#c0caf5',
-              muted: '#565f89',
-              blue: '#7aa2f7',
-              purple: '#bb9af7',
-              cyan: '#73daca',
-              green: '#9ece6a',
-              yellow: '#e0af68',
-              orange: '#ff9e64',
-              red: '#f7768e',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  <title>SHASEKI // Proyecto Colectivo de Agentes para Administración de Datos</title>
   <style>
+    /* =====================================================================
+       OMARCHY OS / HYPRLAND TILING WINDOW MANAGER — AUTOCONTAINED THEME
+       Paleta Catppuccin Mocha / Tokyo Night + Efectos CRT & Neon Glow
+       ===================================================================== */
+    :root {
+      --bg-base: #0d1017;
+      --bg-surface: #131722;
+      --bg-panel: #191e2c;
+      --bg-panel-hover: #21283b;
+      --border-dim: #283149;
+      --border-active: #7aa2f7;
+      --text-main: #c0caf5;
+      --text-muted: #7882a6;
+      --text-bright: #ffffff;
+      --accent-blue: #7aa2f7;
+      --accent-cyan: #7dcfff;
+      --accent-green: #9ece6a;
+      --accent-purple: #bb9af7;
+      --accent-yellow: #e0af68;
+      --accent-red: #f7768e;
+      --accent-orange: #ff9e64;
+      --wa-bg: #0b141a;
+      --wa-in: #202c33;
+      --wa-out: #005c4b;
+      --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
     * {
       box-sizing: border-box;
-      scrollbar-width: thin;
-      scrollbar-color: #242b38 #0b0e14;
+      margin: 0;
+      padding: 0;
     }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(122, 162, 247, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(187, 154, 247, 0.08) 0%, transparent 45%),
+        linear-gradient(rgba(122, 162, 247, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122, 162, 247, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Sutil efecto CRT Scanlines */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%,
+        rgba(0, 0, 0, 0.16) 50%
+      );
+      background-size: 100% 4px;
+    }
+
+    /* Scrollbars estilo Arch / Hyprland */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #0b0e14;
+      background: var(--bg-base);
     }
     ::-webkit-scrollbar-thumb {
-      background: #242b38;
+      background: var(--border-dim);
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #7aa2f7;
+      background: var(--accent-blue);
     }
 
-    body {
-      background-color: #0b0e14;
-      color: #c0caf5;
-      font-family: 'JetBrains Mono', monospace;
-      background-image: 
-        radial-gradient(rgba(122, 162, 247, 0.06) 1px, transparent 1px),
-        radial-gradient(rgba(187, 154, 247, 0.03) 1px, #0b0e14 1px);
-      background-size: 28px 28px;
-      background-position: 0 0, 14px 14px;
-      overflow-x: hidden;
-    }
-
-    /* Hyprland Tiling Window Borders */
-    .hypr-window {
-      background-color: #11151c;
-      border: 1.5px solid #242b38;
-      border-radius: 4px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
-    }
-    .hypr-window:hover,
-    .hypr-window.active-tile {
-      border-color: #7aa2f7;
-      box-shadow: 0 0 18px -4px rgba(122, 162, 247, 0.22);
-    }
-    .hypr-window-green:hover {
-      border-color: #9ece6a;
-      box-shadow: 0 0 18px -4px rgba(158, 206, 106, 0.22);
-    }
-    .hypr-window-purple:hover {
-      border-color: #bb9af7;
-      box-shadow: 0 0 18px -4px rgba(187, 154, 247, 0.22);
-    }
-    .hypr-window-cyan:hover {
-      border-color: #73daca;
-      box-shadow: 0 0 18px -4px rgba(115, 218, 202, 0.22);
-    }
-
-    .window-titlebar {
-      background-color: #161b24;
-      border-bottom: 1px solid #242b38;
+    /* ==================== WAYBAR TOP BAR ==================== */
+    .waybar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(13, 16, 23, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-dim);
       padding: 6px 12px;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.75rem;
-      user-select: none;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
 
-    /* Interactive n8n node styling */
-    .n8n-node-btn {
-      transition: all 0.15s ease;
-    }
-    .n8n-node-btn.selected-node {
-      border-color: #73daca !important;
-      background-color: rgba(115, 218, 202, 0.12) !important;
-      box-shadow: 0 0 14px rgba(115, 218, 202, 0.25);
+    .waybar-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    /* Custom Range Slider */
-    input[type=range] {
-      -webkit-appearance: none;
-      appearance: none;
-      background: #161b24;
-      height: 6px;
-      border-radius: 3px;
-      border: 1px solid #242b38;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 2px;
-      background: #7aa2f7;
+    .ws-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
       cursor: pointer;
-      border: 2px solid #0b0e14;
-      box-shadow: 0 0 8px rgba(122, 162, 247, 0.8);
+      transition: all 0.2s ease;
     }
 
-    /* Blinking cursor */
+    .ws-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-bright);
+      transform: translateY(-1px);
+    }
+
+    .ws-btn.active {
+      background: rgba(122, 162, 247, 0.2);
+      border-color: var(--accent-blue);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(122, 162, 247, 0.45);
+    }
+
+    .daemon-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(158, 206, 106, 0.12);
+      border: 1px solid rgba(158, 206, 106, 0.4);
+      color: var(--accent-green);
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulseAnim 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .clock-pill {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      color: var(--accent-yellow);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .btn-action-top {
+      background: rgba(187, 154, 247, 0.15);
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-top:hover {
+      background: var(--accent-purple);
+      color: var(--bg-base);
+      box-shadow: 0 0 14px rgba(187, 154, 247, 0.5);
+    }
+
+    /* ==================== TILING WINDOWS (HYPRLAND) ==================== */
+    .workspace-container {
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hypr-window {
+      background: rgba(19, 23, 34, 0.94);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .hypr-window:hover,
+    .hypr-window.focused-window {
+      border-color: var(--border-active);
+      box-shadow: 0 0 22px rgba(122, 162, 247, 0.22), inset 0 0 12px rgba(122, 162, 247, 0.04);
+    }
+
+    .window-bar {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-dim);
+      padding: 7px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .window-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-r { background: var(--accent-red); }
+    .dot-y { background: var(--accent-yellow); }
+    .dot-g { background: var(--accent-green); }
+
+    .window-body {
+      padding: 14px;
+    }
+
+    /* ==================== GRID & CARDS ==================== */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 960px) {
+      .grid-2 { grid-template-columns: 5fr 7fr; }
+      .grid-equal { grid-template-columns: 1fr 1fr; }
+      .grid-n8n { grid-template-columns: 7fr 5fr; }
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 640px) {
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .sub-card {
+      background: rgba(13, 16, 23, 0.8);
+      border: 1px solid var(--border-dim);
+      border-radius: 5px;
+      padding: 12px;
+    }
+
+    .collective-banner {
+      background: linear-gradient(90deg, rgba(122, 162, 247, 0.16), rgba(187, 154, 247, 0.12));
+      border: 1px solid rgba(122, 162, 247, 0.45);
+      border-radius: 5px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .ascii-art {
+      color: var(--accent-blue);
+      font-size: 9.5px;
+      line-height: 1.15;
+      font-weight: 700;
+      overflow-x: auto;
+      margin: 10px 0;
+      text-shadow: 0 0 10px rgba(122, 162, 247, 0.35);
+    }
+
     .cursor-blink {
       animation: blink 1s step-end infinite;
     }
     @keyframes blink {
-      0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
 
-    /* WhatsApp dark bubble tail simulation */
-    .wa-bubble-in {
-      background-color: #1f2c34;
-      border-left: 2px solid #73daca;
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px dashed rgba(40, 49, 73, 0.6);
+      font-size: 12px;
     }
-    .wa-bubble-out {
-      background-color: #005c4b;
-      border-right: 2px solid #9ece6a;
+    .spec-row:last-child { border-bottom: none; }
+
+    .kpi-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      border-radius: 5px;
+      padding: 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 4px 0;
+    }
+
+    /* ==================== N8N INTERACTIVE SVG GRAPH ==================== */
+    .n8n-canvas-wrap {
+      background: #0a0d14;
+      background-image: radial-gradient(#242d42 1px, transparent 1px);
+      background-size: 16px 16px;
+      border: 1px solid var(--border-dim);
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    .flow-wire {
+      fill: none;
+      stroke: #3b4766;
+      stroke-width: 2;
+    }
+
+    .flow-wire-active {
+      fill: none;
+      stroke: var(--accent-green);
+      stroke-width: 2.2;
+      stroke-dasharray: 6 6;
+      animation: dashFlow 1.2s linear infinite;
+    }
+
+    .flow-wire-rag {
+      fill: none;
+      stroke: var(--accent-purple);
+      stroke-width: 2;
+      stroke-dasharray: 5 5;
+      animation: dashFlow 1s linear infinite;
+    }
+
+    .flow-wire-err {
+      fill: none;
+      stroke: var(--accent-red);
+      stroke-width: 1.8;
+      stroke-dasharray: 4 4;
+    }
+
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -24; }
+    }
+
+    .svg-node {
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .svg-node rect {
+      fill: #181e2e;
+      stroke: #3b4766;
+      stroke-width: 1.5;
+      rx: 6;
+      transition: all 0.2s ease;
+    }
+    .svg-node:hover rect,
+    .svg-node.selected rect {
+      stroke: var(--accent-cyan);
+      stroke-width: 2.5;
+      fill: #1f273d;
+      filter: drop-shadow(0 0 8px rgba(125, 207, 255, 0.5));
+    }
+    .svg-node text {
+      font-family: var(--font-mono);
+      fill: var(--text-bright);
+      pointer-events: none;
+    }
+
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: rgba(125, 207, 255, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* ==================== WHATSAPP EMULATOR ==================== */
+    .wa-phone {
+      background: var(--wa-bg);
+      border: 1px solid #2a3942;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 410px;
+    }
+
+    .wa-header {
+      background: #202c33;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2a3942;
+      font-family: var(--font-sans);
+    }
+
+    .wa-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #0d1017;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .wa-chat-area {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: var(--font-sans);
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+
+    .wa-meta-notice {
+      align-self: center;
+      background: #182229;
+      color: #8696a0;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      text-align: center;
+      max-width: 90%;
+    }
+
+    .wa-bubble {
+      max-width: 84%;
+      padding: 8px 11px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      position: relative;
+      animation: msgPop 0.25s ease-out;
+    }
+
+    @keyframes msgPop {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .wa-bubble-user {
+      align-self: flex-end;
+      background: var(--wa-out);
+      color: #e9edef;
+      border-top-right-radius: 0;
+    }
+
+    .wa-bubble-bot {
+      align-self: flex-start;
+      background: var(--wa-in);
+      color: #e9edef;
+      border-top-left-radius: 0;
+    }
+
+    .wa-time {
+      display: block;
+      text-align: right;
+      font-size: 10px;
+      color: rgba(233, 237, 239, 0.6);
+      margin-top: 3px;
+    }
+
+    .scenario-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .scenario-btn:hover {
+      border-color: var(--accent-green);
+      background: rgba(158, 206, 106, 0.1);
+      transform: translateX(3px);
+    }
+
+    /* ==================== TARIFARIO TABLE & SEARCH ==================== */
+    .search-input {
+      width: 100%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      color: var(--text-bright);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(125, 207, 255, 0.25);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .data-table th {
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-dim);
+      position: sticky;
+      top: 0;
+    }
+    .data-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(40, 49, 73, 0.5);
+    }
+    .data-table tr:hover td {
+      background: rgba(122, 162, 247, 0.08);
+    }
+
+    /* ==================== 10X SIMULATOR BARS ==================== */
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      transition: width 0.35s ease, background-color 0.35s ease;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    /* ==================== BUTTONS & TOAST ==================== */
+    .btn-primary {
+      background: var(--accent-green);
+      color: var(--bg-base);
+      border: none;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 12px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .btn-primary:hover {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 14px rgba(125, 207, 255, 0.45);
+    }
+
+    .btn-outline {
+      background: var(--bg-panel);
+      color: var(--text-main);
+      border: 1px solid var(--border-dim);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .btn-outline:hover {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      background: rgba(122, 162, 247, 0.1);
+    }
+
+    .toast-banner {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 9998;
+      background: var(--bg-panel);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 10px 14px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      transform: translateY(15px);
+      pointer-events: none;
+      transition: all 0.25s ease;
+    }
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-omarchy-blue selection:text-omarchy-bg">
+<body>
 
-  <!-- ==================== TOP WAYBAR / POLYBAR ==================== -->
-  <header class="sticky top-0 z-50 bg-[#0b0e14]/95 backdrop-blur-md border-b border-omarchy-border px-2 py-1.5 text-xs">
-    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
-      
-      <!-- Left: Hyprland Workspaces -->
-      <nav class="flex items-center flex-wrap gap-1" aria-label="Workspaces">
-        <span class="px-2 py-1 bg-omarchy-blue text-omarchy-bg font-bold rounded-[3px] mr-1 flex items-center gap-1">
-          <span>ARCH::OMARCHY</span>
-        </span>
-        <button onclick="focusPane('pane-1', 1)" id="ws-btn-1" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panelAlt border border-omarchy-blue text-omarchy-blue font-semibold hover:bg-omarchy-blue/20 transition">
-          [1:SYS_ROI]
-        </button>
-        <button onclick="focusPane('pane-2', 2)" id="ws-btn-2" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition">
-          [2:N8N_NODES]
-        </button>
-        <button onclick="focusPane('pane-3', 3)" id="ws-btn-3" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition">
-          [3:WA_LIVE_SIM]
-        </button>
-        <button onclick="focusPane('pane-4', 4)" id="ws-btn-4" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition">
-          [4:SYS_PROMPT]
-        </button>
-        <button onclick="focusPane('pane-5', 5)" id="ws-btn-5" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition">
-          [5:10X_BENCH]
-        </button>
-        <button onclick="focusPane('pane-6', 6)" id="ws-btn-6" class="ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition">
-          [6:EXPORT_JSON]
-        </button>
-      </nav>
+  <!-- ==================== WAYBAR SUPERIOR ==================== -->
+  <header class="waybar">
+    <div class="waybar-group">
+      <button class="ws-btn active" data-ws="1" onclick="focusWorkspace(1)">[1] OVERVIEW</button>
+      <button class="ws-btn" data-ws="2" onclick="focusWorkspace(2)">[2] N8N_GRAPH</button>
+      <button class="ws-btn" data-ws="3" onclick="focusWorkspace(3)">[3] WA_EMULATOR</button>
+      <button class="ws-btn" data-ws="4" onclick="focusWorkspace(4)">[4] TARIFARIO_RAG</button>
+      <button class="ws-btn" data-ws="5" onclick="focusWorkspace(5)">[5] SCALE_10X</button>
+      <button class="ws-btn" data-ws="6" onclick="focusWorkspace(6)">[6] ARTIFACTS</button>
+    </div>
 
-      <!-- Center: Active Window Title -->
-      <div class="hidden xl:flex items-center gap-2 text-omarchy-muted">
-        <span class="text-omarchy-purple">●</span>
-        <span class="text-omarchy-text font-medium">shaseki-bot@n8n-cloud</span>
-        <span>~</span>
-        <span class="text-omarchy-cyan">Entrega Final RAG — Ariel Hernán Contini</span>
-      </div>
+    <div class="waybar-group" style="font-size: 11px; color: var(--text-muted);">
+      <span style="color: var(--accent-purple);">●</span>
+      <span style="color: var(--text-bright); font-weight: 700;">SHASEKI</span>
+      <span>:: Proyecto colectivo de agentes para administración de datos</span>
+    </div>
 
-      <!-- Right: System Telemetry & Quick Download -->
-      <div class="flex items-center flex-wrap gap-1.5">
-        <span class="px-2 py-0.5 bg-omarchy-panel border border-omarchy-border rounded-[3px] text-[11px] text-omarchy-green flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-omarchy-green animate-ping"></span>
-          WA-CLOUD: ACTIVE
-        </span>
-        <span class="hidden sm:inline-block px-2 py-0.5 bg-omarchy-panel border border-omarchy-border rounded-[3px] text-[11px] text-omarchy-purple">
-          GROQ-LPU: 20B (T:0.2)
-        </span>
-        <span class="hidden md:inline-block px-2 py-0.5 bg-omarchy-panel border border-omarchy-border rounded-[3px] text-[11px] text-omarchy-cyan">
-          COHERE-V3: 1024d (topK:6)
-        </span>
-        <span id="waybar-clock" class="hidden lg:inline-block px-2 py-0.5 bg-omarchy-panel border border-omarchy-border rounded-[3px] text-[11px] text-omarchy-yellow">
-          19:22:44
-        </span>
-        <button onclick="downloadWorkflowJSON()" class="px-2.5 py-1 bg-omarchy-green/20 border border-omarchy-green text-omarchy-green font-bold rounded-[3px] hover:bg-omarchy-green hover:text-omarchy-bg transition">
-          [ ⬇ WORKFLOW.JSON ]
-        </button>
-      </div>
+    <div class="waybar-group">
+      <span class="daemon-pill">
+        <span class="pulse-dot"></span>
+        RAG_STORE: ONLINE (1024d)
+      </span>
+      <span id="waybar-clock" class="clock-pill">19:22:44</span>
+      <button class="btn-action-top" onclick="downloadWorkflowJSON()">[ ⬇ WORKFLOW.JSON ]</button>
     </div>
   </header>
 
-  <!-- ==================== MAIN TILING WORKSPACE ==================== -->
-  <main class="flex-1 max-w-[1600px] w-full mx-auto p-2 sm:p-3 space-y-3">
+  <!-- ==================== WORKSPACE CONTENEDOR ==================== -->
+  <main class="workspace-container">
 
-    <!-- =================================================================== -->
-    <!-- PANE 1: [01] CASO DE NEGOCIO & ROI TELEMETRY (NEOFETCH / BTOP STYLE) -->
-    <!-- =================================================================== -->
-    <section id="pane-1" class="hypr-window active-tile">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-blue font-bold">[01]</span>
-          <span class="text-omarchy-text font-semibold">neofetch --project "SHASEKI_BOT_RAG" --roi-telemetry</span>
+    <!-- ================================================================ -->
+    <!-- VENTANA [01]: OVERVIEW & TELEMETRÍA ROI                          -->
+    <!-- ================================================================ -->
+    <section id="pane-1" class="hypr-window focused-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-blue);">[01] neofetch --collective "SHASEKI" --roi-telemetry</strong>
         </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-muted">
-          <span>WORKSPACE_1</span>
-          <span class="text-omarchy-green">[PASS: RUBRIC_STEP_1]</span>
-        </div>
+        <span style="font-size: 11px; color: var(--accent-green);">[STATUS: OPERATIONAL // WORKSPACE_1]</span>
       </div>
 
-      <div class="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
-        
-        <!-- Left Column: ASCII Logo & Neofetch Specs (5 cols) -->
-        <div class="lg:col-span-5 bg-omarchy-bg/70 border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between">
+      <div class="window-body">
+        <!-- Banner Identidad Proyecto Colectivo -->
+        <div class="collective-banner">
           <div>
-            <div class="text-omarchy-muted text-xs mb-2">
-              <span class="text-omarchy-green">ariel@shaseki-studio</span>:<span class="text-omarchy-blue">~/n8n-rag-final</span>$ ./sysinfo.sh<span class="cursor-blink text-omarchy-cyan">█</span>
-            </div>
-            <pre class="text-[10px] sm:text-xs leading-tight text-omarchy-blue font-bold overflow-x-auto select-none my-2">
-  ███████╗██╗  ██╗ █████╗ ███████╗███████╗██╗  ██╗██╗
-  ██╔════╝██║  ██║██╔══██╗██╔════╝██╔════╝██║ ██╔╝██║
-  ███████╗███████║███████║███████╗█████╗  █████╔╝ ██║
-  ╚════██║██╔══██║██╔══██║╚════██║██╔══╝  ██╔═██╗ ██║
-  ███████║██║  ██║██║  ██║███████║███████╗██║  ██╗██║
-  ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝
-  :: AGENTE COMERCIAL AUTÓNOMO CON RAG EN N8N ::</pre>
-
-            <div class="mt-3 space-y-1.5 text-xs border-t border-omarchy-border pt-3">
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Autor:</span><span class="text-omarchy-text">Ariel Hernán Contini</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Estudio / Caso:</span><span class="text-omarchy-cyan">Shaseki (Diseño & Dirección Creativa)</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Orquestador:</span><span class="text-omarchy-text">n8n + LangChain Tools Agent</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Motor LLM:</span><span class="text-omarchy-green">Groq LPU (openai/gpt-oss-20b | T:0.2)</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Embeddings:</span><span class="text-omarchy-yellow">Cohere embed-multilingual-v3.0 (1024d)</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Vector Store:</span><span class="text-omarchy-text">In-Memory (vector_store_key | clearStore)</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Fuente 1 (Ingesta):</span><span class="text-omarchy-blue">Google Drive API OAuth2 (.md)</span></div>
-              <div class="flex justify-between"><span class="text-omarchy-purple font-semibold">Fuente 2 (Chat):</span><span class="text-omarchy-green">WhatsApp Business Cloud Webhook</span></div>
-            </div>
+            <span class="badge-tag" style="background: var(--accent-blue); color: var(--bg-base); margin-right: 6px;">SHASEKI::CORE</span>
+            <strong style="color: var(--text-bright); font-size: 13px;">
+              Proyecto colectivo de agentes para administración de datos, indexación documental y operación comercial automatizada.
+            </strong>
           </div>
-
-          <!-- Color palette bar (classic neofetch blocks) -->
-          <div class="mt-4 pt-3 border-t border-omarchy-border flex items-center justify-between">
-            <div class="flex gap-1.5">
-              <span class="w-4 h-3 bg-omarchy-red inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-orange inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-yellow inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-green inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-cyan inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-blue inline-block rounded-[2px]"></span>
-              <span class="w-4 h-3 bg-omarchy-purple inline-block rounded-[2px]"></span>
-            </div>
-            <span class="text-[11px] text-omarchy-muted">14 Rubros // +100 Servicios</span>
-          </div>
+          <span style="font-size: 11px; color: var(--accent-cyan);">STACK: N8N + WHATSAPP CLOUD + GROQ + COHERE</span>
         </div>
 
-        <!-- Right Column: Business Case, ROI Telemetry & Why Agent+RAG (7 cols) -->
-        <div class="lg:col-span-7 flex flex-col justify-between space-y-3">
-          
-          <!-- Problem & Solution Summary -->
-          <div class="bg-omarchy-bg/70 border border-omarchy-border rounded-[4px] p-3.5">
-            <div class="flex items-center justify-between mb-1.5">
-              <h2 class="text-xs sm:text-sm font-bold text-omarchy-cyan uppercase tracking-wider">
-                :: PROBLEMA OPERATIVO & PROCESO AUTOMATIZADO ::
-              </h2>
-              <span class="text-[11px] px-2 py-0.5 bg-omarchy-cyan/10 text-omarchy-cyan border border-omarchy-cyan/30 rounded-[3px]">
-                Categorías A / B / C
-              </span>
+        <div class="grid-2">
+          <!-- Columna Izquierda: Neofetch System Specs -->
+          <div class="sub-card">
+            <div style="font-size: 11px; color: var(--text-muted);">
+              <span style="color: var(--accent-green);">daemon@shaseki</span>:<span style="color: var(--accent-blue);">~/agents/data-admin</span>$ ./status.sh<span class="cursor-blink" style="color: var(--accent-cyan);">█</span>
             </div>
-            <p class="text-xs text-omarchy-text/90 leading-relaxed">
-              El estudio <strong class="text-omarchy-blue">Shaseki</strong> cotiza más de 100 servicios creativos y digitales (Identidad, Web, UX/UI, Audiovisual, Packaging, 3D) segmentados en tres niveles de cliente: <strong class="text-omarchy-green">Empresa (Cat. A)</strong>, <strong class="text-omarchy-yellow">PyME (Cat. B)</strong> y <strong class="text-omarchy-purple">Particular (Cat. C)</strong>. Previo al agente, cada consulta por WhatsApp exigía buscar precios actualizados por IPC en el tarifario, calcular anticipos (30%), adaptaciones (50%) o descuentos por gremio (20%) y filtrar solicitudes fuera de alcance.
-            </p>
-          </div>
+            <pre class="ascii-art">
+ ███████╗██╗  ██╗ █████╗ ███████╗███████╗██╗  ██╗██╗
+ ██╔════╝██║  ██║██╔══██╗██╔════╝██╔════╝██║ ██╔╝██║
+ ███████╗███████║███████║███████╗█████╗  █████╔╝ ██║
+ ╚════██║██╔══██║██╔══██║╚════██║██╔══╝  ██╔═██╗ ██║
+ ███████║██║  ██║██║  ██║███████║███████╗██║  ██╗██║
+ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝</pre>
 
-          <!-- BTOP-Style ROI Metric Gauges -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div class="bg-omarchy-bg/80 border border-omarchy-border p-3 rounded-[4px]">
-              <div class="text-[11px] text-omarchy-muted">TIEMPO MANUAL vs MANTENIMIENTO</div>
-              <div class="text-base sm:text-lg font-bold text-omarchy-yellow mt-1">2.5h <span class="text-xs text-omarchy-muted">-></span> 15m <span class="text-xs font-normal">/sem</span></div>
-              <div class="w-full bg-omarchy-panelAlt h-1.5 rounded-full mt-2 overflow-hidden">
-                <div class="bg-omarchy-yellow h-full" style="width: 90%"></div>
-              </div>
-              <div class="text-[10px] text-omarchy-muted mt-1">10 hs/mes manual vs 1h mantenimiento Drive</div>
-            </div>
-
-            <div class="bg-omarchy-bg/80 border border-omarchy-green/40 p-3 rounded-[4px]">
-              <div class="text-[11px] text-omarchy-green">AHORRO NETO EFECTIVO</div>
-              <div class="text-base sm:text-lg font-bold text-omarchy-green mt-1">9.0 hs/mes <span class="text-xs font-normal">(2h 15m/sem)</span></div>
-              <div class="w-full bg-omarchy-panelAlt h-1.5 rounded-full mt-2 overflow-hidden">
-                <div class="bg-omarchy-green h-full" style="width: 92%"></div>
-              </div>
-              <div class="text-[10px] text-omarchy-text/80 mt-1">100% transferido a diseño facturable</div>
-            </div>
-
-            <div class="bg-omarchy-bg/80 border border-omarchy-blue/40 p-3 rounded-[4px]">
-              <div class="text-[11px] text-omarchy-blue">ROI MENSUAL RECUPERADO</div>
-              <div class="text-base sm:text-lg font-bold text-omarchy-blue mt-1">$274.500 ARS</div>
-              <div class="w-full bg-omarchy-panelAlt h-1.5 rounded-full mt-2 overflow-hidden">
-                <div class="bg-omarchy-blue h-full" style="width: 100%"></div>
-              </div>
-              <div class="text-[10px] text-omarchy-text/80 mt-1">~180 USD/mes (Hora: $30.500) | API: $0</div>
+            <div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Naturaleza:</span><span>Proyecto colectivo de agentes de datos</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Orquestador:</span><span>n8n Workflow Engine (v1.x / v3 ready)</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Modelo LLM:</span><span style="color: var(--accent-green);">Groq Cloud (openai/gpt-oss-20b | T:0.2)</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Embeddings:</span><span style="color: var(--accent-yellow);">Cohere embed-multilingual-v3.0</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Vector Store:</span><span>In-Memory (vector_store_key | clearStore)</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Entrada #1:</span><span style="color: var(--accent-blue);">Google Drive API OAuth2 (tarifario.md)</span></div>
+              <div class="spec-row"><span style="color: var(--accent-purple);">Entrada #2:</span><span style="color: var(--accent-green);">WhatsApp Business Cloud Webhook</span></div>
             </div>
           </div>
 
-          <!-- Dual Bottom Sub-cards: Limits of ROI & Why AI Agent + RAG -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            <!-- Limits of ROI -->
-            <div class="bg-omarchy-bg/70 border border-omarchy-border rounded-[4px] p-3">
-              <div class="text-xs font-bold text-omarchy-orange mb-1.5 flex items-center gap-1.5">
-                <span>[!] LÍMITES DEL ROI (¿Cuándo no automatizar?)</span>
+          <!-- Columna Derecha: Caso de Negocio, KPIs ROI y Límites -->
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="sub-card">
+              <div style="font-size: 12px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">
+                :: CASO DE USO: ADMINISTRACIÓN DE ARANCELES Y ATENCIÓN COMERCIAL ::
               </div>
-              <ul class="text-[11px] space-y-1.5 text-omarchy-text/85 list-disc pl-4">
-                <li><strong class="text-omarchy-yellow">Consultoría 100% Ad-Hoc:</strong> Si el estudio eliminara los servicios tipificados y cada proyecto requiriera reuniones de discovery a medida, el RAG perdería sentido operativo.</li>
-                <li><strong class="text-omarchy-yellow">Volumen &lt; 2 consultas/mes con cambio diario:</strong> Si hubiera menos de 2 mensajes al mes pero los precios se editaran manualmente todos los días, mantener el archivo superaría el ahorro.</li>
-              </ul>
+              <p style="font-size: 12px; line-height: 1.55; color: var(--text-main);">
+                El colectivo de agentes <strong style="color: var(--text-bright);">SHASEKI</strong> centraliza y consulta un tarifario vivo con más de 100 servicios distribuidos en 15 rubros y segmentados por tipología de cliente: <strong style="color: var(--accent-green);">Empresa (Cat. A)</strong>, <strong style="color: var(--accent-yellow);">PyME (Cat. B)</strong> y <strong style="color: var(--accent-purple);">Particular (Cat. C)</strong>. Automatiza la búsqueda arancelaria, el cálculo de anticipos (30%) y la derivación de casos fuera de alcance.
+              </p>
             </div>
 
-            <!-- Why AI Agent + RAG instead of Simple LLM -->
-            <div class="bg-omarchy-bg/70 border border-omarchy-border rounded-[4px] p-3">
-              <div class="text-xs font-bold text-omarchy-purple mb-1.5 flex items-center gap-1.5">
-                <span>[*] ¿POR QUÉ AI AGENT + RAG Y NO NODO IA SIMPLE?</span>
+            <div class="grid-3">
+              <div class="kpi-card">
+                <div style="font-size: 11px; color: var(--text-muted);">AHORRO NETO SEMANAL</div>
+                <div class="kpi-value" style="color: var(--accent-green);">2h 15m</div>
+                <div style="font-size: 11px; color: var(--text-muted);">2h 30m manual - 15m ingesta</div>
               </div>
-              <ul class="text-[11px] space-y-1.5 text-omarchy-text/85 list-disc pl-4">
-                <li><strong class="text-omarchy-cyan">Economía de Tokens:</strong> Evita inyectar +100 servicios en cada prompt; recupera vía <code class="text-omarchy-green">retrieve-as-tool</code> solo los fragmentos relevantes.</li>
-                <li><strong class="text-omarchy-cyan">Decisión Autónoma:</strong> Clasifica si el usuario es Empresa, PyME o Particular, repregunta si falta el dato o dispara el <em>Fallback</em> a dirección.</li>
-                <li><strong class="text-omarchy-cyan">Desacoplamiento:</strong> Se actualizan precios en Google Drive sin reescribir prompts.</li>
-              </ul>
+              <div class="kpi-card">
+                <div style="font-size: 11px; color: var(--text-muted);">CAPACIDAD RECUPERADA</div>
+                <div class="kpi-value" style="color: var(--accent-cyan);">9 hs / mes</div>
+                <div style="font-size: 11px; color: var(--accent-green);">+$274.500 ARS/mes (~180 USD)</div>
+              </div>
+              <div class="kpi-card">
+                <div style="font-size: 11px; color: var(--text-muted);">COSTO OPERATIVO API</div>
+                <div class="kpi-value" style="color: var(--accent-purple);">$0 USD</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Groq + Cohere Free Tiers</div>
+              </div>
+            </div>
+
+            <div class="sub-card" style="border-left: 3px solid var(--accent-yellow);">
+              <div style="font-size: 11px; font-weight: 700; color: var(--accent-yellow); margin-bottom: 4px;">
+                :: LÍMITES DEL ROI & JUSTIFICACIÓN DE AGENTE CON RAG ::
+              </div>
+              <p style="font-size: 11.5px; line-height: 1.5; color: var(--text-muted);">
+                <strong style="color: var(--text-main);">¿Por qué Agente + RAG?</strong> Evita inyectar los +100 servicios en cada prompt (ahorrando ~85% de tokens por turno) y permite que el agente razone si el cliente ya declaró su categoría (A/B/C) o si debe activar el protocolo de derivación.<br>
+                <strong style="color: var(--text-main);">Límite del ROI:</strong> Dejaría de ser rentable si la operación migrara a proyectos 100% ad-hoc sin tarifario estandarizado o con menos de 2 consultas mensuales.
+              </p>
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- PANE 2: [02] ARQUITECTURA N8N & PIPELINES (NODE INSPECTOR & CANVAS) -->
-    <!-- =================================================================== -->
-    <section id="pane-2" class="hypr-window hypr-window-cyan">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-cyan font-bold">[02]</span>
-          <span class="text-omarchy-text font-semibold">n8n-inspector --workflow "Entrega Final | Shaseki Bot" --interactive</span>
+    <!-- ================================================================ -->
+    <!-- VENTANA [02]: GRAFO INTERACTIVO N8N & INSPECTOR DE NODOS         -->
+    <!-- ================================================================ -->
+    <section id="pane-2" class="hypr-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-cyan);">[02] n8n-canvas --interactive-graph --node-inspector</strong>
         </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-muted">
-          <span>HAZ CLIC EN CUALQUIER NODO PARA INSPECCIONAR SU JSON / EXPRESIÓN</span>
-        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">Click en cualquier nodo SVG para inspeccionar su configuración</span>
       </div>
 
-      <div class="p-3 sm:p-5 space-y-4">
-        
-        <!-- Pipeline Mode Switcher Tabs -->
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-omarchy-border pb-3">
-          <div class="flex flex-wrap gap-2">
-            <button onclick="switchArchTab('tab-rag')" id="arch-btn-tab-rag" class="px-3 py-1.5 text-xs font-bold rounded-[3px] bg-omarchy-cyan text-omarchy-bg transition">
-              [A] FLUJO PRINCIPAL RAG EN WHATSAPP (Rama True)
-            </button>
-            <button onclick="switchArchTab('tab-ingesta')" id="arch-btn-tab-ingesta" class="px-3 py-1.5 text-xs font-bold rounded-[3px] bg-omarchy-panelAlt border border-omarchy-border text-omarchy-text hover:border-omarchy-cyan transition">
-              [B] PIPELINE DE INGESTA (Google Drive -> Vectores)
-            </button>
-            <button onclick="switchArchTab('tab-error')" id="arch-btn-tab-error" class="px-3 py-1.5 text-xs font-bold rounded-[3px] bg-omarchy-panelAlt border border-omarchy-border text-omarchy-text hover:border-omarchy-red transition">
-              [C] MANEJO DE ERRORES MULTIMEDIA (Rama False)
-            </button>
-          </div>
-
-          <button onclick="toggleScreenshotView()" id="toggle-screenshot-btn" class="px-3 py-1.5 text-xs font-semibold rounded-[3px] bg-omarchy-purple/20 border border-omarchy-purple text-omarchy-purple hover:bg-omarchy-purple hover:text-omarchy-bg transition">
-            [ 🖼 VER CAPTURA REAL DEL LIENZO N8N ]
-          </button>
+      <div class="window-body">
+        <!-- Pestañas entre Grafo Vivo y Capturas del Canvas -->
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchCanvasTab('svg', this)">[ Grafo Interactivo Animado ]</button>
+          <button class="tab-btn" onclick="switchCanvasTab('cap1', this)">[ Captura 01: Ingesta Drive -> Vectores ]</button>
+          <button class="tab-btn" onclick="switchCanvasTab('cap2', this)">[ Captura 02: Flujo WhatsApp + RAG ]</button>
+          <button class="tab-btn" onclick="switchCanvasTab('cap3', this)">[ Captura 03: Control Error Multimedia ]</button>
         </div>
 
-        <!-- Main Inspector Grid: Interactive Diagram (7 cols) + Node Terminal Details (5 cols) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          
-          <!-- Left: Interactive Tiling Node Diagram OR Real Screenshot -->
-          <div class="lg:col-span-7 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between relative min-h-[340px]">
-            
-            <!-- VIEW 1: Interactive Node Schematic -->
-            <div id="interactive-schematic-container" class="space-y-4 my-auto">
-              
-              <!-- TAB A: WHATSAPP RAG FLOW -->
-              <div id="schematic-tab-rag" class="space-y-5">
-                <div class="text-[11px] text-omarchy-muted flex items-center justify-between">
-                  <span>// PIPELINE B: CONSULTA TRANSACCIONAL EN TIEMPO REAL (WHATSAPP CLOUD)</span>
-                  <span class="text-omarchy-green">● ALL NODES EXECUTED (GREEN)</span>
-                </div>
+        <div class="grid-n8n">
+          <!-- Izquierda: Canvas SVG o Vista de Captura -->
+          <div>
+            <div id="view-svg" class="n8n-canvas-wrap">
+              <svg viewBox="0 0 780 390" width="100%" style="min-width: 640px; display: block;">
+                <!-- Etiquetas de Zona -->
+                <text x="14" y="20" font-size="10" fill="#7aa2f7" font-weight="bold">PIPELINE 1: INGESTA DE DATOS (GOOGLE DRIVE -> VECTOR STORE)</text>
+                <line x1="14" y1="115" x2="766" y2="115" stroke="#283149" stroke-dasharray="4 4" />
+                <text x="14" y="135" font-size="10" fill="#9ece6a" font-weight="bold">PIPELINE 2: CONSULTA WHATSAPP CLOUD + AGENTE RAG + ERROR HANDLING</text>
 
-                <!-- Main Horizontal Chain -->
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
-                  <button onclick="inspectNode('mensaje_entrante')" id="node-mensaje_entrante" class="n8n-node-btn selected-node text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="flex items-center justify-between text-[10px] text-omarchy-green font-bold">
-                      <span>WA TRIGGER</span><span>✓ 1 item</span>
-                    </div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Mensaje Entrante</div>
-                    <div class="text-[10px] text-omarchy-muted truncate">updates: messages</div>
-                  </button>
+                <!-- Cables Ingesta -->
+                <path d="M 110 62 L 165 62" class="flow-wire-active" />
+                <path d="M 285 62 L 340 62" class="flow-wire-active" />
+                <path d="M 460 62 L 520 62" class="flow-wire-active" />
+                <path d="M 670 85 L 670 102" class="flow-wire-rag" />
 
-                  <button onclick="inspectNode('valido_texto')" id="node-valido_texto" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="flex items-center justify-between text-[10px] text-omarchy-green font-bold">
-                      <span>IF CONDITION</span><span>✓ TRUE</span>
-                    </div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">valido si es texto</div>
-                    <div class="text-[10px] text-omarchy-muted truncate">text.body exists</div>
-                  </button>
+                <!-- Nodos Ingesta -->
+                <g class="svg-node" onclick="inspectNode('go_trigger', this)">
+                  <rect x="15" y="38" width="95" height="48" />
+                  <text x="62" y="60" font-size="11" text-anchor="middle" font-weight="bold">GO!</text>
+                  <text x="62" y="75" font-size="9" text-anchor="middle" fill="#7882a6">Manual Trigger</text>
+                </g>
 
-                  <button onclick="inspectNode('shaseki_bot')" id="node-shaseki_bot" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-cyan">
-                    <div class="flex items-center justify-between text-[10px] text-omarchy-cyan font-bold">
-                      <span>AI AGENT</span><span>✓ 1 item</span>
-                    </div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Shaseki Bot</div>
-                    <div class="text-[10px] text-omarchy-muted truncate">Tools Agent (RAG)</div>
-                  </button>
+                <g class="svg-node" onclick="inspectNode('gdrive', this)">
+                  <rect x="165" y="38" width="120" height="48" />
+                  <text x="225" y="58" font-size="10" text-anchor="middle" font-weight="bold">Google Drive</text>
+                  <text x="225" y="73" font-size="9" text-anchor="middle" fill="#7aa2f7">tarifario.md</text>
+                </g>
 
-                  <button onclick="inspectNode('la_respuesta')" id="node-la_respuesta" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="flex items-center justify-between text-[10px] text-omarchy-green font-bold">
-                      <span>WA SEND</span><span>✓ 1 item</span>
-                    </div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">La Respuesta</div>
-                    <div class="text-[10px] text-omarchy-muted truncate">message: send</div>
-                  </button>
-                </div>
+                <g class="svg-node" onclick="inspectNode('extract', this)">
+                  <rect x="340" y="38" width="120" height="48" />
+                  <text x="400" y="58" font-size="10" text-anchor="middle" font-weight="bold">Extract Text</text>
+                  <text x="400" y="73" font-size="9" text-anchor="middle" fill="#7882a6">DATALOADER</text>
+                </g>
 
-                <!-- Sub-nodes connected to Shaseki Bot -->
-                <div class="border-t border-dashed border-omarchy-border pt-4">
-                  <div class="text-[10px] text-omarchy-purple uppercase mb-2 font-semibold">
-                    └── SUB-NODOS LANGCHAIN CONECTADOS A [SHASEKI BOT]:
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                    <button onclick="inspectNode('in_the_membrane')" id="node-in_the_membrane" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-purple">
-                      <div class="text-[10px] text-omarchy-purple font-bold">CHAT MODEL (✓ 2)</div>
-                      <div class="text-xs font-bold text-omarchy-text mt-0.5">in the membrane</div>
-                      <div class="text-[10px] text-omarchy-muted">Groq gpt-oss-20b</div>
-                    </button>
+                <g class="svg-node" onclick="inspectNode('vectores_insert', this)">
+                  <rect x="520" y="38" width="230" height="48" />
+                  <text x="635" y="58" font-size="11" text-anchor="middle" font-weight="bold" fill="#9ece6a">Vectores (Insert)</text>
+                  <text x="635" y="73" font-size="9" text-anchor="middle" fill="#bb9af7">Cohere v3 + clearStore: true</text>
+                </g>
 
-                    <button onclick="inspectNode('memory_node')" id="node-memory_node" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-yellow">
-                      <div class="text-[10px] text-omarchy-yellow font-bold">MEMORY (✓ 2)</div>
-                      <div class="text-xs font-bold text-omarchy-text mt-0.5">Don't you forget...</div>
-                      <div class="text-[10px] text-omarchy-muted">Window: 12 msgs</div>
-                    </button>
+                <!-- Cables Consulta WhatsApp -->
+                <path d="M 135 190 L 195 190" class="flow-wire-active" />
+                <path d="M 325 190 L 405 190" class="flow-wire-active" />
+                <path d="M 555 190 L 630 190" class="flow-wire-active" />
 
-                    <button onclick="inspectNode('rag_tool')" id="node-rag_tool" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-cyan">
-                      <div class="text-[10px] text-omarchy-cyan font-bold">VECTOR TOOL (✓ 3)</div>
-                      <div class="text-xs font-bold text-omarchy-text mt-0.5">RAG</div>
-                      <div class="text-[10px] text-omarchy-muted">retrieve-as-tool</div>
-                    </button>
+                <!-- Cable Rama False (Multimedia) -->
+                <path d="M 260 220 L 260 315 L 330 315" class="flow-wire-err" />
+                <text x="270" y="275" font-size="9" fill="#f7768e">FALSE (Sticker/Img)</text>
 
-                    <button onclick="inspectNode('cohere_query')" id="node-cohere_query" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-blue">
-                      <div class="text-[10px] text-omarchy-blue font-bold">EMBEDDINGS (1024)</div>
-                      <div class="text-xs font-bold text-omarchy-text mt-0.5">Cohere it!1</div>
-                      <div class="text-[10px] text-omarchy-muted">multilingual-v3.0</div>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                <!-- Cables Sub-nodos Agente -->
+                <path d="M 445 220 L 420 285" class="flow-wire-rag" />
+                <path d="M 480 220 L 505 285" class="flow-wire-rag" />
+                <path d="M 520 220 L 620 285" class="flow-wire-rag" />
+                <path d="M 675 335 L 675 352" class="flow-wire-rag" />
 
-              <!-- TAB B: INGESTA PIPELINE -->
-              <div id="schematic-tab-ingesta" class="hidden space-y-5">
-                <div class="text-[11px] text-omarchy-muted flex items-center justify-between">
-                  <span>// PIPELINE A: INGESTA DOCUMENTAL E INDEXACIÓN IDEMPOTENTE</span>
-                  <span class="text-omarchy-green">● WORKFLOW EXECUTED SUCCESSFULLY</span>
-                </div>
+                <!-- Nodos Consulta WhatsApp -->
+                <g class="svg-node selected" onclick="inspectNode('wa_trigger', this)">
+                  <rect x="15" y="162" width="120" height="56" />
+                  <text x="75" y="186" font-size="10.5" text-anchor="middle" font-weight="bold">Mensaje Entrante</text>
+                  <text x="75" y="203" font-size="9" text-anchor="middle" fill="#9ece6a">WhatsApp Trigger</text>
+                </g>
 
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                  <button onclick="inspectNode('go_trigger')" id="node-go_trigger" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="text-[10px] text-omarchy-green font-bold">MANUAL TRIGGER</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">GO!</div>
-                    <div class="text-[10px] text-omarchy-muted">1 item</div>
-                  </button>
+                <g class="svg-node" onclick="inspectNode('if_texto', this)">
+                  <rect x="195" y="162" width="130" height="56" />
+                  <text x="260" y="186" font-size="10.5" text-anchor="middle" font-weight="bold">valido si es texto</text>
+                  <text x="260" y="203" font-size="9" text-anchor="middle" fill="#7dcfff">IF text.body exists</text>
+                </g>
 
-                  <button onclick="inspectNode('drive_download')" id="node-drive_download" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-blue">
-                    <div class="text-[10px] text-omarchy-blue font-bold">GOOGLE DRIVE</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Look into your book...</div>
-                    <div class="text-[10px] text-omarchy-muted">download: file (.md)</div>
-                  </button>
+                <g class="svg-node" onclick="inspectNode('shaseki_bot', this)">
+                  <rect x="405" y="158" width="150" height="62" />
+                  <text x="480" y="185" font-size="12" text-anchor="middle" font-weight="bold">Shaseki Bot</text>
+                  <text x="480" y="203" font-size="9" text-anchor="middle" fill="#bb9af7">AI Tools Agent v3.1</text>
+                </g>
 
-                  <button onclick="inspectNode('extract_text')" id="node-extract_text" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-cyan">
-                    <div class="text-[10px] text-omarchy-cyan font-bold">EXTRACT FILE</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Tell me what you see</div>
-                    <div class="text-[10px] text-omarchy-muted">Extract From Text</div>
-                  </button>
+                <g class="svg-node" onclick="inspectNode('la_respuesta', this)">
+                  <rect x="630" y="162" width="130" height="56" />
+                  <text x="695" y="186" font-size="10.5" text-anchor="middle" font-weight="bold">La Respuesta</text>
+                  <text x="695" y="203" font-size="9" text-anchor="middle" fill="#9ece6a">WhatsApp Send</text>
+                </g>
 
-                  <button onclick="inspectNode('vectores_insert')" id="node-vectores_insert" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="text-[10px] text-omarchy-green font-bold">VECTOR STORE</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Vectores</div>
-                    <div class="text-[10px] text-omarchy-muted">mode: insert | clear:true</div>
-                  </button>
-                </div>
+                <!-- Nodo Rama Error Multimedia -->
+                <g class="svg-node" onclick="inspectNode('error_media', this)">
+                  <rect x="330" y="330" width="170" height="46" />
+                  <text x="415" y="350" font-size="9.5" text-anchor="middle" font-weight="bold" fill="#f7768e">Aviso Solo Texto</text>
+                  <text x="415" y="365" font-size="8.5" text-anchor="middle" fill="#7882a6">Control de Errores #1</text>
+                </g>
 
-                <div class="border-t border-dashed border-omarchy-border pt-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <button onclick="inspectNode('dataloader_node')" id="node-dataloader_node" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-purple">
-                    <div class="text-[10px] text-omarchy-purple font-bold">DOCUMENT LOADER (4 items)</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-0.5">DATALOADER</div>
-                    <div class="text-[10px] text-omarchy-muted">Default Data Loader -> Chunks semánticos</div>
-                  </button>
-                  <button onclick="inspectNode('cohere_ingest')" id="node-cohere_ingest" class="n8n-node-btn text-left p-2.5 rounded-[4px] bg-omarchy-panelAlt border border-omarchy-blue">
-                    <div class="text-[10px] text-omarchy-blue font-bold">EMBEDDINGS (4 items)</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-0.5">Cohere it!</div>
-                    <div class="text-[10px] text-omarchy-muted">embed-multilingual-v3.0 (1024 dims)</div>
-                  </button>
-                </div>
-              </div>
+                <!-- Sub-nodos AI Agent -->
+                <g class="svg-node" onclick="inspectNode('groq_llm', this)">
+                  <rect x="365" y="280" width="95" height="42" />
+                  <text x="412" y="299" font-size="9.5" text-anchor="middle" font-weight="bold">Groq LPU</text>
+                  <text x="412" y="313" font-size="8.5" text-anchor="middle" fill="#e0af68">gpt-oss-20b</text>
+                </g>
 
-              <!-- TAB C: ERROR HANDLING FLOW -->
-              <div id="schematic-tab-error" class="hidden space-y-5">
-                <div class="text-[11px] text-omarchy-orange flex items-center justify-between">
-                  <span>// PIPELINE C: MITIGACIÓN DE PAYLOADS NO TEXTUALES (STICKERS / AUDIO / IMAGEN)</span>
-                  <span class="text-omarchy-orange">● RAMA FALSE ACTIVADA (0 TOKENS CONSUMIDOS)</span>
-                </div>
+                <g class="svg-node" onclick="inspectNode('memory', this)">
+                  <rect x="470" y="280" width="95" height="42" />
+                  <text x="517" y="299" font-size="9.5" text-anchor="middle" font-weight="bold">Memory</text>
+                  <text x="517" y="313" font-size="8.5" text-anchor="middle" fill="#7dcfff">Window (12)</text>
+                </g>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
-                  <button onclick="inspectNode('mensaje_entrante')" class="n8n-node-btn text-left p-3 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-green">
-                    <div class="text-[10px] text-omarchy-green font-bold">1. WEBHOOK EVENT</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Mensaje Entrante</div>
-                    <div class="text-[10px] text-omarchy-muted">Recibe Sticker / Imagen</div>
-                  </button>
-
-                  <button onclick="inspectNode('valido_texto')" class="n8n-node-btn text-left p-3 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-orange">
-                    <div class="text-[10px] text-omarchy-orange font-bold">2. IF -> RAMA FALSE</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">valido si es texto</div>
-                    <div class="text-[10px] text-omarchy-muted">text.body === undefined</div>
-                  </button>
-
-                  <button onclick="inspectNode('error_multimedia')" id="node-error_multimedia" class="n8n-node-btn text-left p-3 rounded-[4px] bg-omarchy-panel border-2 border-omarchy-red">
-                    <div class="text-[10px] text-omarchy-red font-bold">3. FALLBACK WHATSAPP</div>
-                    <div class="text-xs font-bold text-omarchy-text mt-1">Si nos envían un sticker...</div>
-                    <div class="text-[10px] text-omarchy-muted">Envía aviso de solo texto</div>
-                  </button>
-                </div>
-
-                <div class="bg-omarchy-panelAlt border border-omarchy-border p-3 rounded-[4px] text-xs text-omarchy-text/90">
-                  <strong class="text-omarchy-cyan">¿Cómo se actualiza el Vector Store cuando cambia el manual?</strong>
-                  Ambos flujos se mantienen separados y sincronizados mediante la clave <code class="text-omarchy-green">vector_store_key</code>. Al editar <code class="text-omarchy-yellow">tarifario_shaseki.md</code> en Google Drive, se dispara <code class="text-omarchy-blue">GO!</code>; el nodo <code class="text-omarchy-blue">Vectores</code> tiene <code class="text-omarchy-purple">clearStore: true</code>, purgando los vectores anteriores antes de insertar los nuevos para evitar colisiones o precios desactualizados.
-                </div>
-              </div>
-
+                <g class="svg-node" onclick="inspectNode('rag_tool', this)">
+                  <rect x="585" y="280" width="175" height="54" />
+                  <text x="672" y="302" font-size="11" text-anchor="middle" font-weight="bold" fill="#9ece6a">RAG (Tool)</text>
+                  <text x="672" y="318" font-size="9" text-anchor="middle" fill="#bb9af7">Cohere 1024d | topK: 6</text>
+                </g>
+              </svg>
             </div>
 
-            <!-- VIEW 2: Real Screenshot Viewer (Toggled via button) -->
-            <div id="real-screenshot-container" class="hidden flex-col items-center justify-center my-auto space-y-2">
-              <div class="w-full flex items-center justify-between text-xs text-omarchy-cyan mb-1">
-                <span id="screenshot-caption">Archivo: ./capturas/02-flujo-rag-whatsapp.png</span>
-                <span class="text-omarchy-muted">(Si visualizas localmente sin la carpeta /capturas, se muestra el render técnico)</span>
+            <!-- Contenedor para Capturas Reales de GitHub -->
+            <div id="view-capture" class="n8n-canvas-wrap" style="display: none; text-align: center;">
+              <img id="capture-img" src="" alt="Captura n8n" style="max-width: 100%; border-radius: 4px; border: 1px solid var(--border-dim);"
+                onerror="this.style.display='none'; document.getElementById('capture-fallback').style.display='block';" />
+              <div id="capture-fallback" style="display: none; padding: 30px 15px; color: var(--text-muted); font-size: 12px;">
+                <div style="color: var(--accent-yellow); font-weight: 700; margin-bottom: 6px;">[ ARCHIVO DE CAPTURA REFERENCIADO EN /capturas/ ]</div>
+                <p id="capture-caption-text">Ruta esperada en el repositorio: capturas/02-flujo-rag-whatsapp.png</p>
+                <p style="font-size: 11px; margin-top: 8px;">Cuando subas este archivo a GitHub Pages junto a la carpeta <code>/capturas</code>, la imagen se renderizará automáticamente aquí.</p>
               </div>
-              <img id="arch-screenshot-img" src="./capturas/02-flujo-rag-whatsapp.png" alt="Captura del Canvas de n8n"
-                class="w-full max-h-[320px] object-contain rounded-[4px] border border-omarchy-border bg-omarchy-panel"
-                onerror="this.onerror=null; this.src='https://placehold.co/1200x550/11151c/73daca?text=CAPTURA+N8N+CANVAS+(Subir+a+/capturas+en+GitHub)';" />
-            </div>
-
-            <!-- Bottom Status Bar inside Diagram -->
-            <div class="mt-4 pt-2 border-t border-omarchy-border flex flex-wrap items-center justify-between text-[11px] text-omarchy-muted">
-              <span>KEY_STORE: <strong class="text-omarchy-cyan">vector_store_key</strong></span>
-              <span>CLEAR_STORE_ON_INSERT: <strong class="text-omarchy-green">TRUE</strong></span>
-              <span>SESSION_KEY: <strong class="text-omarchy-yellow">messages[0].from + "_v8"</strong></span>
             </div>
           </div>
 
-          <!-- Right: Live Node Configuration Terminal (5 cols) -->
-          <div class="lg:col-span-5 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between">
+          <!-- Derecha: Panel Inspector de Nodo -->
+          <div class="sub-card" style="display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-              <div class="flex items-center justify-between border-b border-omarchy-border pb-2 mb-3">
-                <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-omarchy-cyan"></span>
-                  <span id="insp-title" class="text-xs font-bold text-omarchy-cyan">NODO: Shaseki Bot</span>
-                </div>
-                <span id="insp-type" class="text-[10px] px-2 py-0.5 bg-omarchy-panelAlt border border-omarchy-border rounded-[3px] text-omarchy-purple">
-                  @n8n/n8n-nodes-langchain.agent
-                </span>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-dim); padding-bottom: 8px; margin-bottom: 10px;">
+                <strong id="insp-title" style="color: var(--accent-cyan); font-size: 13px;">NODO: Mensaje Entrante</strong>
+                <span id="insp-type" class="badge-tag" style="background: rgba(122,162,247,0.15); color: var(--accent-blue);">whatsAppTrigger</span>
               </div>
-
-              <p id="insp-desc" class="text-xs text-omarchy-text/90 leading-relaxed mb-3">
-                Agente principal (Tools Agent) que recibe la consulta validada de WhatsApp, mantiene el hilo con Simple Memory y está obligado por System Prompt a invocar la herramienta vectorial "RAG" antes de cotizar.
+              <p id="insp-desc" style="font-size: 12px; line-height: 1.5; color: var(--text-main); margin-bottom: 10px;">
+                Fuente de Entrada #2: Escucha en tiempo real los webhooks de WhatsApp Business Cloud (evento "messages") e inyecta el payload con el identificador de sesión y el cuerpo de texto.
               </p>
-
-              <div class="text-[11px] text-omarchy-muted mb-1 font-semibold">PARÁMETROS & EXPRESIONES N8N:</div>
-              <pre id="insp-code" class="bg-omarchy-panel border border-omarchy-border rounded-[4px] p-3 text-[11px] text-omarchy-green overflow-x-auto leading-relaxed font-mono">{
-  "promptType": "define",
-  "text": "={{ $json.messages[0].text.body }}",
-  "tools": ["RAG (vector_store_key | topK: 6)"],
-  "model": "openai/gpt-oss-20b (temp: 0.2)",
-  "memory": "={{ $('Mensaje Entrante').item.json.messages[0].from }}_v8"
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">CONFIGURACIÓN / PARÁMETROS N8N:</div>
+              <pre id="insp-code" style="background: var(--bg-panel); border: 1px solid var(--border-dim); padding: 10px; border-radius: 4px; font-size: 11px; color: var(--accent-green); overflow-x: auto; line-height: 1.4;">{
+  "updates": ["messages"],
+  "output_path": "$json.messages[0].text.body",
+  "session_id": "$json.messages[0].from"
 }</pre>
             </div>
-
-            <div class="mt-3 pt-2 border-t border-omarchy-border flex items-center justify-between text-[11px]">
-              <span class="text-omarchy-muted">ESTADO EN EJECUCIÓN:</span>
-              <span id="insp-status" class="text-omarchy-green font-bold">[✓ 200 OK — OUTPUT GENERATED]</span>
+            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-dim); font-size: 11px; color: var(--accent-green); font-weight: 700;" id="insp-status">
+              [✓ WEBHOOK ACTIVO — ESCUCHANDO EVENTOS META CLOUD]
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- PANE 3: [03] WHATSAPP BUSINESS LIVE SIMULATOR & RAG TESTER          -->
-    <!-- =================================================================== -->
-    <section id="pane-3" class="hypr-window hypr-window-green">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-green font-bold">[03]</span>
-          <span class="text-omarchy-text font-semibold">whatsapp-cloud-sim --account "Shaseki Bot" --test-rag-and-fallback</span>
+    <!-- ================================================================ -->
+    <!-- VENTANA [03]: EMULADOR WHATSAPP CLOUD & CONSOLA DE TRAZAS        -->
+    <!-- ================================================================ -->
+    <section id="pane-3" class="hypr-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-green);">[03] whatsapp-cloud-simulator --test-cases --live-logs</strong>
         </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-muted">
-          <span>PRUEBA INTERACTIVA DE ESCENARIOS DE RÚBRICA</span>
-        </div>
+        <span style="font-size: 11px; color: var(--accent-cyan);">Prueba los 4 casos validados de la rúbrica</span>
       </div>
 
-      <div class="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
-        
-        <!-- Left Column: Scenario Triggers & Execution Log Trace (5 cols) -->
-        <div class="lg:col-span-5 flex flex-col justify-between space-y-3">
-          <div class="bg-omarchy-bg border border-omarchy-border rounded-[4px] p-3.5 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-omarchy-green uppercase">:: EJECUTAR PAYLOAD DE PRUEBA ::</span>
-              <button onclick="toggleWaScreenshotModal()" class="text-[11px] px-2 py-0.5 bg-omarchy-blue/20 border border-omarchy-blue text-omarchy-blue rounded-[3px] hover:bg-omarchy-blue hover:text-omarchy-bg transition">
-                [ 🖼 Ver Captura Real ]
-              </button>
+      <div class="window-body">
+        <div class="grid-equal">
+          <!-- Izquierda: Teléfono WhatsApp Business -->
+          <div class="wa-phone">
+            <div class="wa-header">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="wa-avatar">SB</div>
+                <div>
+                  <div style="color: #e9edef; font-weight: 700; font-size: 13.5px;">Shaseki Bot</div>
+                  <div id="wa-typing-status" style="color: #00a884; font-size: 11px;">Cuenta de empresa • en línea</div>
+                </div>
+              </div>
+              <span style="font-size: 10px; background: rgba(0,168,132,0.18); color: #00a884; padding: 3px 7px; border-radius: 4px; font-weight: 700;">Meta Cloud API</span>
             </div>
-            <p class="text-[11px] text-omarchy-muted">
-              Dispara cualquiera de los 4 casos evaluados en la devolución para verificar la recuperación vectorial (RAG), la clasificación de clientes y los dos caminos de control de errores:
-            </p>
 
-            <div class="space-y-2 pt-1">
-              <button onclick="runWaSimulation('pyme')" class="w-full text-left p-2.5 rounded-[4px] bg-omarchy-panel hover:bg-omarchy-panelAlt border border-omarchy-green/60 transition flex items-center justify-between group">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-green group-hover:underline">[TEST 1] Cliente PyME + Anticipo (RAG Hit)</div>
-                  <div class="text-[10px] text-omarchy-muted">Filtra Cat. B ($1.379.200) y Anticipo (30%) desde Vector Store</div>
-                </div>
-                <span class="text-xs text-omarchy-green font-bold">▶</span>
-              </button>
-
-              <button onclick="runWaSimulation('nocat')" class="w-full text-left p-2.5 rounded-[4px] bg-omarchy-panel hover:bg-omarchy-panelAlt border border-omarchy-cyan/60 transition flex items-center justify-between group">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-cyan group-hover:underline">[TEST 2] Cliente sin categoría (Desglose A/B/C)</div>
-                  <div class="text-[10px] text-omarchy-muted">Consulta "Sitio Web One Page" -> Devuelve 3 precios y repregunta</div>
-                </div>
-                <span class="text-xs text-omarchy-cyan font-bold">▶</span>
-              </button>
-
-              <button onclick="runWaSimulation('fallback')" class="w-full text-left p-2.5 rounded-[4px] bg-omarchy-panel hover:bg-omarchy-panelAlt border border-omarchy-yellow/60 transition flex items-center justify-between group">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-yellow group-hover:underline">[TEST 3] Fuera de Alcance (Protocolo Fallback)</div>
-                  <div class="text-[10px] text-omarchy-muted">Consulta "Pausa 20 días / Cripto" -> Deriva a dirección Shaseki</div>
-                </div>
-                <span class="text-xs text-omarchy-yellow font-bold">▶</span>
-              </button>
-
-              <button onclick="runWaSimulation('sticker')" class="w-full text-left p-2.5 rounded-[4px] bg-omarchy-panel hover:bg-omarchy-panelAlt border border-omarchy-red/60 transition flex items-center justify-between group">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-red group-hover:underline">[TEST 4] Envío de Sticker / GIF (Rama False)</div>
-                  <div class="text-[10px] text-omarchy-muted">Nodo "valido si es texto" corta el flujo y responde sin gastar tokens</div>
-                </div>
-                <span class="text-xs text-omarchy-red font-bold">▶</span>
-              </button>
+            <div id="wa-chat-stream" class="wa-chat-area">
+              <div class="wa-meta-notice">
+                Esta empresa usa un servicio seguro de Meta para administrar este chat.
+              </div>
+              <div class="wa-bubble wa-bubble-user">
+                Hola, tengo una PyME y quiero saber cuánto cuesta el diseño de una Nueva Identidad Corporativa y qué porcentaje de anticipo piden.
+                <span class="wa-time">19:18 ✓✓</span>
+              </div>
+              <div class="wa-bubble wa-bubble-bot">
+                ¡Hola! Con gusto te confirmo los valores para una <strong>PyME</strong>:<br><br>
+                • <strong>Precio Nueva Identidad Corporativa:</strong> $1.379.200<br>
+                • <strong>Anticipo mínimo:</strong> 30 % del valor total.
+                <span class="wa-time">19:19</span>
+              </div>
             </div>
           </div>
 
-          <!-- Live Terminal Execution Log -->
-          <div class="bg-omarchy-bg border border-omarchy-border rounded-[4px] p-3.5 flex-1 flex flex-col justify-between">
-            <div class="text-[11px] font-bold text-omarchy-purple mb-2 flex items-center justify-between">
-              <span>:: N8N EXECUTION TRACE LOG ::</span>
-              <span id="sim-trace-badge" class="text-[10px] px-1.5 py-0.5 bg-omarchy-green/15 text-omarchy-green rounded">RAG_RETRIEVAL_OK</span>
+          <!-- Derecha: Disparadores de Escenarios y Consola de Logs -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="sub-card">
+              <div style="font-size: 11.5px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 8px;">
+                :: DISPARAR ESCENARIO DE PRUEBA EN WHATSAPP ::
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px;">
+                <button class="scenario-btn" onclick="runWaScenario('pyme')">
+                  <span>[1] Consulta PyME (Nueva Identidad + Anticipo)</span>
+                  <span style="color: var(--accent-green);">RAG_HIT</span>
+                </button>
+                <button class="scenario-btn" onclick="runWaScenario('nocat')">
+                  <span>[2] Consulta sin categoría (Desglose A / B / C)</span>
+                  <span style="color: var(--accent-cyan);">MULTI_TIER</span>
+                </button>
+                <button class="scenario-btn" onclick="runWaScenario('fallback')">
+                  <span>[3] Fuera de alcance (Pausa 20 días / Cripto)</span>
+                  <span style="color: var(--accent-yellow);">FALLBACK</span>
+                </button>
+                <button class="scenario-btn" onclick="runWaScenario('sticker')">
+                  <span>[4] Envío de Sticker / Imagen (Rama False)</span>
+                  <span style="color: var(--accent-red);">ERR_GUARD</span>
+                </button>
+              </div>
             </div>
-            <pre id="wa-terminal-trace" class="text-[11px] text-omarchy-text/90 font-mono whitespace-pre-wrap leading-relaxed overflow-x-auto">[19:18:02] WEBHOOK_IN: from="542805123245" type="text"
+
+            <div class="sub-card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 700; color: var(--accent-purple);">:: N8N EXECUTION TRACE LOG ::</span>
+                <span id="log-badge" class="badge-tag" style="background: rgba(158,206,106,0.15); color: var(--accent-green);">RAG_RETRIEVAL_OK</span>
+              </div>
+              <pre id="wa-trace-box" style="font-size: 11px; line-height: 1.5; color: var(--text-main); white-space: pre-wrap;">[19:18:02] WEBHOOK_IN: from="549XXXXXXXXXX" type="text"
 [19:18:02] IF_NODE [valido si es texto]: TRUE
-[19:18:02] MEMORY [Don't you forget about me]: key="542805123245_v8"
+[19:18:02] MEMORY [Don't you forget about me]: key="549XXXXXXXXXX_v8"
 [19:18:03] TOOL_CALL -> RAG(query="Nueva Identidad Corporativa anticipo")
 [19:18:03] COHERE_EMBED: 1024 dims -> topK=6 chunks retrieved
 [19:18:03] GROQ_LPU (gpt-oss-20b): 312ms -> WhatsApp Send 200 OK</pre>
+            </div>
           </div>
         </div>
-
-        <!-- Right Column: WhatsApp Business Chat Window + Real Capture Toggle (7 cols) -->
-        <div class="lg:col-span-7 bg-[#0b141a] border border-omarchy-border rounded-[4px] flex flex-col justify-between overflow-hidden min-h-[420px]">
-          
-          <!-- WhatsApp Business Header -->
-          <div class="bg-[#202c33] px-4 py-2.5 border-b border-omarchy-border flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full bg-[#7c3aed] flex items-center justify-center text-white font-bold text-sm">
-                SB
-              </div>
-              <div>
-                <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                  <span>Shaseki Bot</span>
-                  <span class="text-[10px] px-1.5 py-0.5 bg-omarchy-green/20 text-omarchy-green rounded">Cuenta de empresa</span>
-                </div>
-                <div class="text-[11px] text-gray-400">WhatsApp Business Cloud API • En línea</div>
-              </div>
-            </div>
-            <button onclick="resetWaChat()" class="text-[11px] px-2 py-1 bg-omarchy-panel border border-omarchy-border text-omarchy-muted hover:text-omarchy-text rounded-[3px]">
-              [ Limpiar Chat ]
-            </button>
-          </div>
-
-          <!-- Chat Messages Area (or Real Screenshot View) -->
-          <div id="wa-chat-messages" class="p-4 space-y-3 overflow-y-auto max-h-[360px] flex-1">
-            <!-- Meta Security Notice -->
-            <div class="text-center my-1">
-              <span class="inline-block bg-[#182229] text-[#8696a0] text-[11px] px-3 py-1 rounded-[4px] border border-[#2a3942]">
-                Esta empresa usa un servicio seguro de Meta para administrar este chat.
-              </span>
-            </div>
-
-            <!-- Initial Pre-loaded Verification Chat (Matching 192244.png) -->
-            <div class="flex justify-end">
-              <div class="wa-bubble-out text-white text-xs p-2.5 rounded-[4px] max-w-[82%]">
-                <div>Hola, tengo una PyME y quiero saber cuánto cuesta el diseño de una Nueva Identidad Corporativa y qué porcentaje de anticipo piden.</div>
-                <div class="text-[10px] text-gray-300 text-right mt-1">19:18 ✓✓</div>
-              </div>
-            </div>
-
-            <div class="flex justify-start">
-              <div class="wa-bubble-in text-gray-100 text-xs p-2.5 rounded-[4px] max-w-[82%] space-y-1">
-                <div>¡Hola! Con gusto te confirmo los valores para una <strong>PyME</strong>:</div>
-                <div class="pl-2 pt-1">
-                  <div>• <strong>Precio Nueva Identidad Corporativa:</strong> $1.379.200</div>
-                  <div>• <strong>Anticipo mínimo:</strong> 30 % del valor total.</div>
-                </div>
-                <div class="text-[10px] text-gray-400 text-right mt-1">19:19</div>
-              </div>
-            </div>
-
-            <div class="flex justify-end">
-              <div class="wa-bubble-out text-white text-xs p-2.5 rounded-[4px] max-w-[82%]">
-                <div>¿Y qué pasa si necesito pausar el proyecto por 20 días o pagar con criptomonedas?</div>
-                <div class="text-[10px] text-gray-300 text-right mt-1">19:19 ✓✓</div>
-              </div>
-            </div>
-
-            <div class="flex justify-start">
-              <div class="wa-bubble-in text-gray-100 text-xs p-2.5 rounded-[4px] max-w-[82%]">
-                <div>Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.</div>
-                <div class="text-[10px] text-gray-400 text-right mt-1">19:19</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hidden Real WhatsApp Capture Container -->
-          <div id="wa-real-capture-view" class="hidden p-3 bg-omarchy-bg flex-1 flex-col items-center justify-center">
-            <div class="text-xs text-omarchy-green mb-2 flex items-center justify-between w-full">
-              <span>Evidencia Real: ./capturas/04-evidencia-chat-whatsapp.png</span>
-              <button onclick="toggleWaScreenshotModal()" class="text-omarchy-yellow underline">[Volver al Simulador Interactivo]</button>
-            </div>
-            <img src="./capturas/04-evidencia-chat-whatsapp.png" alt="Evidencia Real WhatsApp Business"
-              class="w-full max-h-[310px] object-contain rounded border border-omarchy-border"
-              onerror="this.onerror=null; this.src='https://placehold.co/1000x500/11151c/9ece6a?text=EVIDENCIA+WHATSAPP+BUSINESS+(04-evidencia-chat-whatsapp.png)';" />
-          </div>
-
-          <!-- Bottom Input Bar -->
-          <div class="bg-[#202c33] px-3 py-2 border-t border-omarchy-border flex items-center gap-2">
-            <input id="custom-wa-input" type="text" placeholder="Escribe una consulta del tarifario (ej: cuánto sale un folleto tríptico o modelado 3D)..."
-              class="flex-1 bg-[#2a3942] text-xs text-white px-3 py-2 rounded-[3px] border border-transparent focus:border-omarchy-green focus:outline-none"
-              onkeydown="if(event.key==='Enter') handleCustomWaQuery()" />
-            <button onclick="handleCustomWaQuery()" class="px-3 py-2 bg-omarchy-green text-omarchy-bg font-bold text-xs rounded-[3px] hover:bg-omarchy-cyan transition">
-              ENVIAR ↵
-            </button>
-          </div>
-
-        </div>
-
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- PANE 4: [04] INGENIERÍA DE PROMPT, MODELO CLOUD & PRIVACIDAD (ZDR)  -->
-    <!-- =================================================================== -->
-    <section id="pane-4" class="hypr-window hypr-window-purple">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-purple font-bold">[04]</span>
-          <span class="text-omarchy-text font-semibold">nvim ./prompts/system_prompt_shaseki.md --privacy-compliance</span>
+    <!-- ================================================================ -->
+    <!-- VENTANA [04]: EXPLORADOR EN VIVO DEL TARIFARIO VECTORIZADO       -->
+    <!-- ================================================================ -->
+    <section id="pane-4" class="hypr-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-purple);">[04] vector-db --query "tarifario_shaseki.md" --filter-tier</strong>
         </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-muted">
-          <span>SYSTEM PROMPT + CLOUD VS LOCAL + PRIVACIDAD ZDR</span>
-        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">Base de conocimiento depurada (15 Rubros + Parámetros)</span>
       </div>
 
-      <div class="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
-        
-        <!-- Left: Production System Prompt & Tool Description (7 cols) -->
-        <div class="lg:col-span-7 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between">
-          <div>
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b border-omarchy-border">
-              <div>
-                <span class="text-xs font-bold text-omarchy-purple">:: SYSTEM PROMPT DE PRODUCCIÓN (NODO: Shaseki Bot) ::</span>
+      <div class="window-body">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-size: 12px; color: var(--text-muted);">
+            Filtra por rubro o servicio para verificar los importes exactos que consulta el agente RAG:
+          </div>
+          <div style="width: 100%; max-width: 380px;">
+            <input id="tarifario-filter" type="text" class="search-input" placeholder="Buscar (ej: Identidad, Web, 3D, RRSS, Packaging, Hora)..." oninput="filterTarifario()" />
+          </div>
+        </div>
+
+        <div class="sub-card" style="padding: 0; max-height: 290px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rubro</th>
+                <th>Servicio / Parámetro</th>
+                <th style="color: var(--accent-green);">Empresa (Cat. A)</th>
+                <th style="color: var(--accent-yellow);">PyME (Cat. B)</th>
+                <th style="color: var(--accent-purple);">Particular (Cat. C)</th>
+              </tr>
+            </thead>
+            <tbody id="tarifario-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- VENTANA [05]: SIMULADOR DE ESCALABILIDAD 10X                     -->
+    <!-- ================================================================ -->
+    <section id="pane-5" class="hypr-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-yellow);">[05] btop --benchmark-10x --cache-and-ratelimit</strong>
+        </div>
+        <span style="font-size: 11px; color: var(--accent-cyan);">Simulación de carga: 40 a 400 consultas/día</span>
+      </div>
+
+      <div class="window-body">
+        <div class="grid-equal">
+          <!-- Controles del Simulador -->
+          <div class="sub-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px;">
+                <span>Volumen Diario de Consultas:</span>
+                <span id="sim-vol-text" style="color: var(--accent-cyan);">400 consultas/día (Escenario 10x)</span>
               </div>
-              <button onclick="copySystemPrompt()" id="btn-copy-prompt" class="px-2.5 py-1 bg-omarchy-purple/20 border border-omarchy-purple text-omarchy-purple text-xs font-bold rounded-[3px] hover:bg-omarchy-purple hover:text-omarchy-bg transition">
-                [ 📋 COPIAR SYSTEM PROMPT ]
-              </button>
+              <input id="sim-slider" type="range" min="40" max="400" step="20" value="400" oninput="updateScaleSim()" />
+              <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+                <span>40/día (1x Base)</span>
+                <span>200/día (5x)</span>
+                <span>400/día (10x Target)</span>
+              </div>
             </div>
 
-            <pre id="system-prompt-text" class="text-[11px] text-omarchy-text/95 font-mono whitespace-pre-wrap leading-relaxed max-h-[320px] overflow-y-auto bg-omarchy-panel p-3 rounded-[4px] border border-omarchy-border">Rol: Eres el Asistente Comercial y Ejecutivo de Cuentas del estudio de diseño "Shaseki". Atiendes a clientes y prospectos a través de WhatsApp Business.
+            <div style="background: var(--bg-panel); border: 1px solid var(--border-dim); padding: 10px; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <div>
+                <div style="font-size: 12px; font-weight: 700; color: var(--accent-green);">Caché Semántica + Rate Limiting</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Resuelve el 60% de consultas frecuentes sin invocar al LLM</div>
+              </div>
+              <input id="sim-cache-toggle" type="checkbox" checked onchange="updateScaleSim()" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-green);" />
+            </div>
+
+            <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+              En un crecimiento 10x (~400 mensajes/día), la migración a <strong style="color: var(--text-main);">Supabase (pgvector)</strong> con caché semántica y control de cola en el webhook evita errores <strong style="color: var(--accent-red);">HTTP 429 (Rate Limit)</strong> y reduce en un 60% el gasto de tokens.
+            </p>
+          </div>
+
+          <!-- Barras de Telemetría en Tiempo Real -->
+          <div class="sub-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <span>Latencia Promedio (End-to-End):</span>
+                <strong id="metric-latency" style="color: var(--accent-green);">250 ms (-82%)</strong>
+              </div>
+              <div class="progress-track">
+                <div id="bar-latency" class="progress-fill" style="width: 18%; background: var(--accent-green);"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <span>Tasa de Errores (HTTP 429 / Timeout):</span>
+                <strong id="metric-errors" style="color: var(--accent-green);">0.4 %</strong>
+              </div>
+              <div class="progress-track">
+                <div id="bar-errors" class="progress-fill" style="width: 4%; background: var(--accent-green);"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <span>Consumo Diario de Tokens (Input + Output):</span>
+                <strong id="metric-tokens" style="color: var(--accent-cyan);">192.000 tokens/día</strong>
+              </div>
+              <div class="progress-track">
+                <div id="bar-tokens" class="progress-fill" style="width: 40%; background: var(--accent-cyan);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- VENTANA [06]: SYSTEM PROMPT & EXPORTACIÓN DE ARTEFACTOS          -->
+    <!-- ================================================================ -->
+    <section id="pane-6" class="hypr-window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <strong style="margin-left: 6px; color: var(--accent-blue);">[06] nvim system_prompt.txt &amp; git-artifacts-export</strong>
+        </div>
+        <span style="font-size: 11px; color: var(--accent-green);">100% Anonimizado • Listo para Repositorio GitHub</span>
+      </div>
+
+      <div class="window-body">
+        <div class="grid-n8n">
+          <!-- Izquierda: System Prompt con Copiado -->
+          <div class="sub-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="font-size: 12px; color: var(--accent-purple);">:: SYSTEM PROMPT COMPLETO (SHASEKI BOT) ::</strong>
+              <button class="btn-action-top" onclick="copySystemPrompt()">[ 📋 COPIAR PROMPT ]</button>
+            </div>
+            <pre id="system-prompt-text" style="background: var(--bg-panel); border: 1px solid var(--border-dim); padding: 10px; border-radius: 4px; font-size: 11px; line-height: 1.45; color: var(--text-main); max-height: 260px; overflow-y: auto; white-space: pre-wrap;">Rol: Eres el Asistente Comercial y Ejecutivo de Cuentas del estudio de diseño "Shaseki". Atiendes a clientes y prospectos a través de WhatsApp Business.
 
 REGLA CRÍTICA DE EJECUCIÓN (OBLIGATORIA):
 Antes de redactar cualquier respuesta sobre precios, aranceles, servicios, anticipos o condiciones de trabajo, DEBES INVOCAR SIEMPRE la herramienta "RAG" enviando como query el nombre del servicio consultado por el usuario. NUNCA respondas de memoria ni asumas que no tienes la información sin haber ejecutado primero la herramienta "RAG".
 
 Tono y Estilo:
-- Mantén un tono estrictamente profesional, cordial, consultivo y ejecutivo, adaptado para el cliente final de WhatsApp.
+- Mantén un tono estrictamente profesional, cordial y ejecutivo: saluda brevemente y presenta los valores dentro de una oración amable antes del desglose.
 - Sé breve, claro y directo.
 - Formato nativo de WhatsApp: Para hacer negritas, usa ESTRICTAMENTE un solo asterisco por lado (ejemplo correcto: *Presupuesto* / ejemplo prohibido: **Presupuesto**). Para listas, usa únicamente guiones (-) sin asteriscos y saltos de línea limpios.
 
@@ -840,1045 +1232,380 @@ Restricciones y Reglas de Negocio:
 "Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad."</pre>
           </div>
 
-          <div class="mt-3 pt-3 border-t border-omarchy-border">
-            <div class="text-[11px] font-bold text-omarchy-cyan mb-1">TOOL DESCRIPTION (NODO: RAG):</div>
-            <div class="bg-omarchy-panel border border-omarchy-border p-2.5 rounded-[4px] text-[11px] text-omarchy-muted">
-              "Busca en el tarifario oficial de servicios creativos y digitales del estudio Shaseki. Contiene los precios en pesos (ARS) discriminados por tipo de cliente (Empresa, PyME y Particular) para 15 rubros, así como el valor de la Hora de Trabajo, Adaptaciones, Gremio y Anticipo. Úsalo siempre para consultar precios de cualquier trabajo o servicio."
+          <!-- Derecha: Descarga Directa de Artefactos -->
+          <div class="sub-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">
+                :: DESCARGA DE ENTREGABLES (ANONIMIZADOS) ::
+              </div>
+              <p style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+                Genera y descarga localmente los archivos limpios del colectivo <strong style="color: var(--text-main);">SHASEKI</strong> para subir directamente al repositorio de entrega:
+              </p>
+
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn-primary" onclick="downloadWorkflowJSON()">
+                  <span>[ ⬇ 1. WORKFLOW-AGENTE-RAG.JSON ]</span>
+                  <span>n8n JSON</span>
+                </button>
+                <button class="btn-outline" onclick="downloadTarifarioMD()">
+                  <span>[ ⬇ 2. TARIFARIO_SHASEKI.MD ]</span>
+                  <span>Base RAG</span>
+                </button>
+                <button class="btn-outline" onclick="downloadReadmeMD()">
+                  <span>[ ⬇ 3. README.MD (DOCUMENTACIÓN) ]</span>
+                  <span>GitHub Doc</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-panel); border: 1px solid var(--border-dim); padding: 8px 10px; border-radius: 4px; font-size: 11px; color: var(--text-muted);">
+              <strong style="color: var(--accent-yellow);">ATAJOS DE TECLADO:</strong> Presiona las teclas <strong>1</strong> a <strong>6</strong> en tu teclado para enfocar y navegar entre las ventanas del dashboard.
             </div>
           </div>
         </div>
-
-        <!-- Right: Cloud vs Local + Extended Data Privacy Measures (5 cols) -->
-        <div class="lg:col-span-5 flex flex-col justify-between space-y-3">
-          
-          <!-- Cloud vs Local -->
-          <div class="bg-omarchy-bg border border-omarchy-border rounded-[4px] p-3.5">
-            <h3 class="text-xs font-bold text-omarchy-blue uppercase mb-2">
-              :: DECISIÓN DE MODELO: CLOUD (GROQ LPU) VS LOCAL (OLLAMA) ::
-            </h3>
-            <ul class="text-[11px] space-y-2 text-omarchy-text/90">
-              <li><strong class="text-omarchy-green">1. Latencia y Hardware de Estudio:</strong> Ejecutar un modelo local vía Ollama con <em>Tool Calling</em> confiable (8B–20B parámetros) consumiría entre 8 y 16 GB de VRAM/RAM en la estación de trabajo mientras se renderiza en 3D o se opera Adobe CC, subiendo la latencia a 15–25s. Groq LPU resuelve el ciclo completo en <strong>&lt; 2 segundos</strong> con 0 consumo local.</li>
-              <li><strong class="text-omarchy-green">2. Costo vs Volumen:</strong> Para 15–40 consultas diarias, Groq y Cohere operan dentro del <em>Free Tier</em> ($0 USD/mes), sin gasto eléctrico ni hardware dedicado 24/7.</li>
-              <li><strong class="text-omarchy-green">3. Independencia de Proveedor:</strong> La arquitectura modular en n8n permite cambiar el sub-nodo <code>in the membrane</code> a OpenAI, Anthropic u Ollama local en 1 clic sin tocar la lógica del agente.</li>
-            </ul>
-          </div>
-
-          <!-- Extended Data Privacy (Feedback improvement) -->
-          <div class="bg-omarchy-bg border border-omarchy-purple/50 rounded-[4px] p-3.5 flex-1">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-xs font-bold text-omarchy-purple uppercase">
-                :: PRIVACIDAD: RETENCIÓN, ACCESO Y TRATAMIENTO ::
-              </h3>
-              <span class="text-[10px] px-1.5 py-0.5 bg-omarchy-purple/20 text-omarchy-purple rounded">MEJORA INCORPORADA</span>
-            </div>
-            <p class="text-[11px] text-omarchy-muted mb-2">
-              Medidas concretas implementadas para proteger datos de contacto y proyectos bajo confidencialidad (NDA):
-            </p>
-            <div class="space-y-2 text-[11px]">
-              <div class="p-2 bg-omarchy-panel rounded border border-omarchy-border">
-                <strong class="text-omarchy-cyan">1. Minimización en Tratamiento (Payload Scrubbing):</strong>
-                Al LLM externo solo se le inyecta <code class="text-omarchy-green">$json.messages[0].text.body</code>, excluyendo el número de teléfono (<code class="text-omarchy-yellow">from</code>) y metadatos del perfil de WhatsApp del prompt enviado a Groq.
-              </div>
-              <div class="p-2 bg-omarchy-panel rounded border border-omarchy-border">
-                <strong class="text-omarchy-cyan">2. Política de Retención (ZDR & Memoria Volátil):</strong>
-                Inferencia bajo políticas <em>Zero Data Retention</em> (los prompts no entrenan modelos públicos) y ventana volátil en RAM limitada a 12 mensajes (<code class="text-omarchy-yellow">contextWindowLength: 12</code>) que se purga al reiniciar la sesión.
-              </div>
-              <div class="p-2 bg-omarchy-panel rounded border border-omarchy-border">
-                <strong class="text-omarchy-cyan">3. Control de Acceso (RBAC & Credenciales):</strong>
-                Tokens OAuth2 de Google Drive y System User Tokens de Meta WhatsApp Cloud cifrados en el vault de n8n con alcance restringido únicamente al archivo del tarifario.
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- PANE 5: [05] SIMULADOR DE ESCALABILIDAD 10X (BENCHMARK INTERACTIVO) -->
-    <!-- =================================================================== -->
-    <section id="pane-5" class="hypr-window">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-yellow font-bold">[05]</span>
-          <span class="text-omarchy-text font-semibold">benchmark-10x --simulate-load --cache-redis --rate-limit</span>
-        </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-muted">
-          <span>VALIDACIÓN DE LATENCIA, TASA DE ERRORES Y TOKENS</span>
-        </div>
-      </div>
-
-      <div class="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
-        
-        <!-- Left Controls: Volume Slider & Architecture Toggles (5 cols) -->
-        <div class="lg:col-span-5 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between space-y-4">
-          <div>
-            <div class="text-xs font-bold text-omarchy-yellow uppercase mb-1">
-              :: PARÁMETROS DE SIMULACIÓN DE CARGA (1X A 10X) ::
-            </div>
-            <p class="text-[11px] text-omarchy-muted mb-4">
-              Ajusta el volumen diario de consultas en WhatsApp y activa/desactiva las mejoras de infraestructura para medir el efecto real del Caché Semántico y Rate Limiting:
-            </p>
-
-            <!-- Volume Slider -->
-            <div class="bg-omarchy-panel border border-omarchy-border p-3 rounded-[4px] mb-3">
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-omarchy-text">Volumen Diario de Consultas:</span>
-                <span id="sim-vol-label" class="text-omarchy-cyan">400 consultas/día (Escenario 10x)</span>
-              </div>
-              <input id="sim-vol-slider" type="range" min="40" max="400" step="20" value="400" class="w-full" oninput="update10xBenchmark()" />
-              <div class="flex justify-between text-[10px] text-omarchy-muted mt-1">
-                <span>40/día (1x Actual)</span>
-                <span>200/día (5x)</span>
-                <span>400/día (10x Web+WA)</span>
-              </div>
-            </div>
-
-            <!-- Toggles -->
-            <div class="space-y-2.5">
-              <label class="flex items-center justify-between p-2.5 bg-omarchy-panel border border-omarchy-border rounded-[4px] cursor-pointer hover:border-omarchy-cyan transition">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-cyan">Caché Semántica (Redis / Supabase pgvector)</div>
-                  <div class="text-[10px] text-omarchy-muted">Resuelve el 60% de consultas repetitivas de precios sin invocar a Groq</div>
-                </div>
-                <input id="toggle-cache" type="checkbox" checked class="w-4 h-4 accent-[#73daca]" onchange="update10xBenchmark()" />
-              </label>
-
-              <label class="flex items-center justify-between p-2.5 bg-omarchy-panel border border-omarchy-border rounded-[4px] cursor-pointer hover:border-omarchy-green transition">
-                <div>
-                  <div class="text-xs font-bold text-omarchy-green">Rate Limiting & Cola en Webhook Entrada</div>
-                  <div class="text-[10px] text-omarchy-muted">Controla ráfagas concurrentes evitando errores HTTP 429 en APIs</div>
-                </div>
-                <input id="toggle-ratelimit" type="checkbox" checked class="w-4 h-4 accent-[#9ece6a]" onchange="update10xBenchmark()" />
-              </label>
-            </div>
-          </div>
-
-          <div class="bg-omarchy-panelAlt border border-omarchy-border p-3 rounded-[4px] text-[11px] text-omarchy-text/90">
-            <strong class="text-omarchy-purple">Migración de Persistencia en 10x:</strong>
-            Se reemplaza <code>Simple Vector Store</code> (RAM) por <strong>Supabase (pgvector)</strong> y la memoria de sesión por <strong>Postgres Chat Memory</strong>, evitando pérdida de vectores ante reinicios del contenedor n8n.
-          </div>
-        </div>
-
-        <!-- Right Telemetry Bars: Latency, Error Rate, Token Usage (7 cols) -->
-        <div class="lg:col-span-7 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between space-y-4">
-          <div class="flex items-center justify-between border-b border-omarchy-border pb-2">
-            <span class="text-xs font-bold text-omarchy-cyan">:: TELEMETRÍA COMPARATIVA (BASE vs OPTIMIZADA 10X) ::</span>
-            <span id="bench-status-tag" class="text-[10px] px-2 py-0.5 bg-omarchy-green/20 text-omarchy-green font-bold rounded">
-              CACHE + RATE LIMIT ACTIVOS
-            </span>
-          </div>
-
-          <!-- Metric 1: Latency -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs">
-              <span class="font-bold text-omarchy-text">1. Latencia Promedio End-to-End (ms)</span>
-              <span id="metric-lat-diff" class="text-omarchy-green font-bold">-82% tiempo de respuesta</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-muted">Sin Caché (Base):</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-lat-base" class="bg-omarchy-red/80 h-full transition-all duration-300" style="width: 88%"></div>
-              </div>
-              <span id="val-lat-base" class="col-span-2 text-right text-omarchy-red font-bold">1.850 ms</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-cyan">Arquitectura 10x:</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-lat-opt" class="bg-omarchy-cyan h-full transition-all duration-300" style="width: 16%"></div>
-              </div>
-              <span id="val-lat-opt" class="col-span-2 text-right text-omarchy-cyan font-bold">260 ms</span>
-            </div>
-          </div>
-
-          <!-- Metric 2: Error Rate -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs">
-              <span class="font-bold text-omarchy-text">2. Tasa de Errores (HTTP 429 Rate Limit / Timeout)</span>
-              <span id="metric-err-diff" class="text-omarchy-green font-bold">Mitigación de ráfagas concurrentes</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-muted">Sin Rate Limit:</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-err-base" class="bg-omarchy-orange h-full transition-all duration-300" style="width: 75%"></div>
-              </div>
-              <span id="val-err-base" class="col-span-2 text-right text-omarchy-orange font-bold">10.4 %</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-green">Arquitectura 10x:</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-err-opt" class="bg-omarchy-green h-full transition-all duration-300" style="width: 4%"></div>
-              </div>
-              <span id="val-err-opt" class="col-span-2 text-right text-omarchy-green font-bold">0.3 %</span>
-            </div>
-          </div>
-
-          <!-- Metric 3: Token Consumption -->
-          <div class="space-y-1.5">
-            <div class="flex justify-between text-xs">
-              <span class="font-bold text-omarchy-text">3. Consumo Diario de Tokens (Prompt + 6 Chunks + Memoria)</span>
-              <span id="metric-tok-diff" class="text-omarchy-purple font-bold">60% ahorro en tokens</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-muted">Sin Caché (100% LLM):</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-tok-base" class="bg-omarchy-yellow h-full transition-all duration-300" style="width: 100%"></div>
-              </div>
-              <span id="val-tok-base" class="col-span-2 text-right text-omarchy-yellow font-bold">480.000 /día</span>
-            </div>
-            <div class="grid grid-cols-12 gap-2 items-center text-[11px]">
-              <span class="col-span-3 text-omarchy-purple">Arquitectura 10x:</span>
-              <div class="col-span-7 bg-omarchy-panel h-4 rounded overflow-hidden border border-omarchy-border">
-                <div id="bar-tok-opt" class="bg-omarchy-purple h-full transition-all duration-300" style="width: 40%"></div>
-              </div>
-              <span id="val-tok-opt" class="col-span-2 text-right text-omarchy-purple font-bold">192.000 /día</span>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- PANE 6: [06] EXPORTACIÓN DEL REPOSITORIO (.JSON & TARIFARIO .MD)    -->
-    <!-- =================================================================== -->
-    <section id="pane-6" class="hypr-window hypr-window-green">
-      <div class="window-titlebar">
-        <div class="flex items-center gap-2">
-          <span class="text-omarchy-green font-bold">[06]</span>
-          <span class="text-omarchy-text font-semibold">git-export --files "workflow-agente-rag.json, tarifario_shaseki.md" --checklist</span>
-        </div>
-        <div class="flex items-center gap-2 text-[11px] text-omarchy-green font-bold">
-          <span>[7/7 REQUISITOS CUMPLIDOS]</span>
-        </div>
-      </div>
-
-      <div class="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
-        
-        <!-- Left: Checklist Table (7 cols) -->
-        <div class="lg:col-span-7 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4">
-          <h3 class="text-xs font-bold text-omarchy-green uppercase mb-3">
-            :: CHECKLIST DE VERIFICACIÓN DE LA ENTREGA FINAL ::
-          </h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="border-b border-omarchy-border text-omarchy-muted">
-                  <th class="py-2 pr-2">Requisito de la Consigna</th>
-                  <th class="py-2 px-2">Implementación en Shaseki Bot</th>
-                  <th class="py-2 pl-2 text-right">Estado</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-omarchy-border/60 text-[11px]">
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">1. Archivo .json funcional de n8n</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Incluido en el repo y descargable en 1 clic desde este panel.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">2. Al menos 2 fuentes de entrada</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Google Drive OAuth2 (Ingesta Tarifario) + WhatsApp Cloud Trigger.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">3. AI Agent + RAG con decisión real</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Invoca tool <code>RAG</code>, clasifica Cat. A/B/C, repregunta o deriva.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">4. System Prompt profesional WhatsApp</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Tono ejecutivo, formato un asterisco y protocolo de Fallback.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">5. Justificación ROI + Límites + Modelo</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Ahorro neto 9 hs/mes ($274.500 ARS), Groq LPU vs Ollama y ZDR.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">6. Dos puntos de manejo de errores</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Filtro de stickers/multimedia (Rama False) + Guardrail anti-alucinación.</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-                <tr>
-                  <td class="py-2 pr-2 font-semibold text-omarchy-text">7. Métricas de simulación 10x</td>
-                  <td class="py-2 px-2 text-omarchy-muted">Medición de latencia (-82%), errores (&lt;0.4%) y tokens (-60%).</td>
-                  <td class="py-2 pl-2 text-right text-omarchy-green font-bold">[PASS]</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Right: Direct Artifact Downloads (5 cols) -->
-        <div class="lg:col-span-5 bg-omarchy-bg border border-omarchy-border rounded-[4px] p-4 flex flex-col justify-between space-y-3">
-          <div>
-            <h3 class="text-xs font-bold text-omarchy-cyan uppercase mb-1">
-              :: DESCARGA DIRECTA DE ENTREGABLES ::
-            </h3>
-            <p class="text-[11px] text-omarchy-muted mb-3">
-              Descarga los archivos listos para importar directamente en tu instancia de n8n o inspeccionar la base de conocimientos Markdown:
-            </p>
-
-            <div class="space-y-2.5">
-              <button onclick="downloadWorkflowJSON()" class="w-full py-2.5 px-3 bg-omarchy-green text-omarchy-bg font-bold text-xs rounded-[3px] hover:bg-omarchy-cyan transition flex items-center justify-between">
-                <span>[ ⬇ DESCARGAR WORKFLOW-AGENTE-RAG.JSON ]</span>
-                <span>n8n v1.x</span>
-              </button>
-
-              <button onclick="copyWorkflowJSON()" id="btn-copy-json" class="w-full py-2 px-3 bg-omarchy-panel border border-omarchy-blue text-omarchy-blue font-bold text-xs rounded-[3px] hover:bg-omarchy-blue hover:text-omarchy-bg transition flex items-center justify-between">
-                <span>[ 📋 COPIAR JSON AL PORTAPAPELES (CTRL+V EN N8N) ]</span>
-                <span>JSON</span>
-              </button>
-
-              <button onclick="downloadTarifarioMD()" class="w-full py-2 px-3 bg-omarchy-panel border border-omarchy-purple text-omarchy-purple font-bold text-xs rounded-[3px] hover:bg-omarchy-purple hover:text-omarchy-bg transition flex items-center justify-between">
-                <span>[ ⬇ DESCARGAR TARIFARIO_SHASEKI.MD ]</span>
-                <span>14 Rubros</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="p-2.5 bg-omarchy-panelAlt border border-omarchy-border rounded-[3px] text-[11px] text-omarchy-muted">
-            <span class="text-omarchy-yellow font-bold">TIP DE TECLADO:</span> Presiona las teclas <kbd class="px-1.5 py-0.5 bg-omarchy-bg border border-omarchy-border text-omarchy-text rounded">1</kbd> a <kbd class="px-1.5 py-0.5 bg-omarchy-bg border border-omarchy-border text-omarchy-text rounded">6</kbd> para saltar entre las ventanas del tiling manager como en Hyprland.
-          </div>
-        </div>
-
       </div>
     </section>
 
   </main>
 
-  <!-- ==================== FOOTER STATUS LINE ==================== -->
-  <footer class="bg-[#0b0e14] border-t border-omarchy-border px-4 py-2 text-[11px] text-omarchy-muted mt-4">
-    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2">
+  <!-- ==================== FOOTER STATUSLINE ==================== -->
+  <footer style="background: #090c12; border-top: 1px solid var(--border-dim); padding: 8px 14px; font-size: 11px; color: var(--text-muted); margin-top: 10px;">
+    <div style="max-width: 1560px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;">
       <div>
-        <span class="text-omarchy-blue font-bold">NORMAL</span>
-        <span class="mx-2">|</span>
-        <span>shaseki-rag-final.html</span>
-        <span class="mx-2">|</span>
-        <span class="text-omarchy-green">utf-8 [unix]</span>
+        <span style="color: var(--accent-blue); font-weight: 700;">NORMAL</span>
+        <span style="margin: 0 8px;">|</span>
+        <span>shaseki-dashboard.html</span>
+        <span style="margin: 0 8px;">|</span>
+        <span style="color: var(--accent-green);">utf-8 [unix]</span>
       </div>
       <div>
-        <span>Ariel Hernán Contini — Estudio Shaseki (Trelew, Patagonia Argentina)</span>
+        <span>SHASEKI — Proyecto colectivo de agentes para administración de datos</span>
       </div>
     </div>
   </footer>
 
-  <!-- ==================== JAVASCRIPT LOGIC & EMBEDDED ARTIFACTS ==================== -->
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="toast-banner">Acción completada</div>
+
+  <!-- ==================== JAVASCRIPT INTERACTIVO ==================== -->
   <script>
-    // 1. Live Clock in Waybar
+    // 1. Reloj en vivo Waybar
     function updateClock() {
       const now = new Date();
-      const timeStr = now.toTimeString().split(' ')[0];
       const clockEl = document.getElementById('waybar-clock');
-      if (clockEl) clockEl.textContent = timeStr;
+      if (clockEl) {
+        clockEl.textContent = now.toTimeString().split(' ')[0];
+      }
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 2. Hyprland Workspace Navigation & Keyboard Shortcuts (1-6)
-    function focusPane(paneId, index) {
-      const target = document.getElementById(paneId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      document.querySelectorAll('.hypr-window').forEach(w => w.classList.remove('active-tile'));
-      if (target) target.classList.add('active-tile');
+    // Toast feedback helper
+    function showToast(text) {
+      const toast = document.getElementById('toast-msg');
+      if (!toast) return;
+      toast.textContent = '[✓] ' + text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2600);
+    }
 
+    // 2. Navegación Hyprland Workspaces (Clic + Teclas 1..6)
+    function focusWorkspace(num) {
       document.querySelectorAll('.ws-btn').forEach(btn => {
-        btn.className = 'ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panel border border-omarchy-border text-omarchy-text hover:border-omarchy-blue transition';
+        btn.classList.toggle('active', Number(btn.dataset.ws) === num);
       });
-      const activeBtn = document.getElementById('ws-btn-' + index);
-      if (activeBtn) {
-        activeBtn.className = 'ws-btn px-2 py-1 rounded-[3px] bg-omarchy-panelAlt border border-omarchy-blue text-omarchy-blue font-semibold transition';
+      document.querySelectorAll('.hypr-window').forEach(win => {
+        win.classList.remove('focused-window');
+      });
+      const targetPane = document.getElementById('pane-' + num);
+      if (targetPane) {
+        targetPane.classList.add('focused-window');
+        targetPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
     document.addEventListener('keydown', (e) => {
-      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+        return;
+      }
       if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
-        focusPane('pane-' + e.key, e.key);
+        focusWorkspace(Number(e.key));
       }
     });
 
-    // 3. Pane 2: Architecture Tab Switcher & Node Inspector Data
-    let currentArchTab = 'tab-rag';
-    let showingScreenshot = false;
-
-    const screenshotMap = {
-      'tab-rag': {
-        src: './capturas/02-flujo-rag-whatsapp.png',
-        caption: 'Archivo: ./capturas/02-flujo-rag-whatsapp.png (Ejecución Completa RAG en WhatsApp Business)'
+    // 3. Inspector de Nodos n8n + Pestañas de Capturas
+    const nodeSpecs = {
+      go_trigger: {
+        title: 'NODO: GO! (Manual Trigger)',
+        type: 'manualTrigger',
+        desc: 'Disparador manual del pipeline de ingesta desacoplado. Se ejecuta cada vez que el colectivo actualiza aranceles en el documento maestro.',
+        code: '{\n  "type": "n8n-nodes-base.manualTrigger",\n  "pipeline": "Ingesta Vectorial Idempotente"\n}',
+        status: '[✓ PIPELINE DE INGESTA LISTO]'
       },
-      'tab-ingesta': {
-        src: './capturas/01-ingesta-vectores.png',
-        caption: 'Archivo: ./capturas/01-ingesta-vectores.png (Pipeline de Ingesta Google Drive -> Vectores)'
+      gdrive: {
+        title: 'NODO: Look into your book of rules',
+        type: 'googleDrive (OAuth2)',
+        desc: 'Fuente de Entrada #1: Descarga el archivo limpio tarifario_shaseki.md desde Google Drive mediante credenciales OAuth2 restringidas.',
+        code: '{\n  "operation": "download",\n  "file": "tarifario_shaseki.md",\n  "auth": "googleDriveOAuth2Api"\n}',
+        status: '[✓ FUENTE DOCUMENTAL VERIFICADA]'
       },
-      'tab-error': {
-        src: './capturas/03-flujo-error-multimedia.png',
-        caption: 'Archivo: ./capturas/03-flujo-error-multimedia.png (Activación de Rama False ante Sticker/Imagen)'
-      }
-    };
-
-    function switchArchTab(tabId) {
-      currentArchTab = tabId;
-      ['tab-rag', 'tab-ingesta', 'tab-error'].forEach(id => {
-        const el = document.getElementById('schematic-' + id);
-        const btn = document.getElementById('arch-btn-' + id);
-        if (el) el.classList.add('hidden');
-        if (btn) {
-          btn.className = 'px-3 py-1.5 text-xs font-bold rounded-[3px] bg-omarchy-panelAlt border border-omarchy-border text-omarchy-text hover:border-omarchy-cyan transition';
-        }
-      });
-
-      const activeEl = document.getElementById('schematic-' + tabId);
-      const activeBtn = document.getElementById('arch-btn-' + tabId);
-      if (activeEl) activeEl.classList.remove('hidden');
-      if (activeBtn) {
-        activeBtn.className = 'px-3 py-1.5 text-xs font-bold rounded-[3px] bg-omarchy-cyan text-omarchy-bg transition';
-      }
-
-      // Update screenshot image if screenshot view is open
-      const imgEl = document.getElementById('arch-screenshot-img');
-      const capEl = document.getElementById('screenshot-caption');
-      if (imgEl && screenshotMap[tabId]) {
-        imgEl.src = screenshotMap[tabId].src;
-        capEl.textContent = screenshotMap[tabId].caption;
-      }
-
-      // Inspect default node of that tab
-      if (tabId === 'tab-rag') inspectNode('shaseki_bot');
-      if (tabId === 'tab-ingesta') inspectNode('vectores_insert');
-      if (tabId === 'tab-error') inspectNode('error_multimedia');
-    }
-
-    function toggleScreenshotView() {
-      showingScreenshot = !showingScreenshot;
-      const schem = document.getElementById('interactive-schematic-container');
-      const screen = document.getElementById('real-screenshot-container');
-      const btn = document.getElementById('toggle-screenshot-btn');
-
-      if (showingScreenshot) {
-        schem.classList.add('hidden');
-        screen.classList.remove('hidden');
-        screen.classList.add('flex');
-        btn.textContent = '[ 🎛 VOLVER AL INSPECTOR INTERACTIVO DE NODOS ]';
-      } else {
-        schem.classList.remove('hidden');
-        screen.classList.add('hidden');
-        screen.classList.remove('flex');
-        btn.textContent = '[ 🖼 VER CAPTURA REAL DEL LIENZO N8N ]';
-      }
-    }
-
-    const nodeDatabase = {
-      mensaje_entrante: {
+      extract: {
+        title: 'NODO: Tell me what you see + DATALOADER',
+        type: 'extractFromFile',
+        desc: 'Extrae el texto plano del archivo Markdown y lo fragmenta en chunks limpios listos para la vectorización semántica.',
+        code: '{\n  "operation": "text",\n  "jsonData": "={{ $json.data }}"\n}',
+        status: '[✓ CHUNKS EXTRAÍDOS SIN RUIDO]'
+      },
+      vectores_insert: {
+        title: 'NODO: Vectores (Insert + Clear Store)',
+        type: 'vectorStoreInMemory',
+        desc: 'Almacena los embeddings generados por Cohere bajo la clave "vector_store_key". Usa clearStore: true para purgar vectores antiguos y evitar duplicados.',
+        code: '{\n  "mode": "insert",\n  "memoryKey": "vector_store_key",\n  "clearStore": true\n}',
+        status: '[✓ VECTOR STORE ACTUALIZADA SIN DUPLICADOS]'
+      },
+      wa_trigger: {
         title: 'NODO: Mensaje Entrante',
-        type: 'n8n-nodes-base.whatsAppTrigger',
-        desc: 'Fuente de Entrada #2: Escucha en tiempo real los webhooks de la API de Meta WhatsApp Business Cloud (evento "messages"). Inyecta el payload con el número remitente y el cuerpo del mensaje.',
-        code: `{\n  "updates": ["messages"],\n  "webhookId": "ee405cc6-d7ce-4a78-a467-007df86aa567",\n  "output_sample": {\n    "messages": [{ "from": "542805123245", "type": "text", "text": { "body": "..." } }]\n  }\n}`,
-        status: '[✓ 1 ITEM — WEBHOOK EVENT RECEIVED]'
+        type: 'whatsAppTrigger',
+        desc: 'Fuente de Entrada #2: Escucha en tiempo real los webhooks de WhatsApp Business Cloud (evento "messages") e inyecta el payload con el ID de sesión y texto.',
+        code: '{\n  "updates": ["messages"],\n  "text_path": "$json.messages[0].text.body",\n  "session_id": "$json.messages[0].from"\n}',
+        status: '[✓ WEBHOOK ACTIVO — ESCUCHANDO EVENTOS META CLOUD]'
       },
-      valido_texto: {
+      if_texto: {
         title: 'NODO: valido si es texto',
-        type: 'n8n-nodes-base.if (v2.4)',
-        desc: 'Control de Errores #1: Verifica estrictamente que exista la propiedad text.body. Si el cliente envía un sticker, imagen, audio o GIF, desvía la ejecución por la rama FALSE evitando que el AI Agent falle.',
-        code: `{\n  "leftValue": "={{ $json.messages[0].text.body }}",\n  "operator": { "type": "string", "operation": "exists" },\n  "routing": {\n    "true": "-> Shaseki Bot",\n    "false": "-> Si nos envían un sticker, GIF o Imagen"\n  }\n}`,
-        status: '[✓ CONDITIONAL ROUTER ACTIVE]'
+        type: 'n8n-nodes-base.if',
+        desc: 'Control de Errores #1: Evalúa que exista $json.messages[0].text.body. Si llega una imagen, sticker o audio, desvía por la rama FALSE.',
+        code: '{\n  "leftValue": "={{ $json.messages[0].text.body }}",\n  "operator": "string exists"\n}',
+        status: '[✓ FILTRO DE PAYLOADS MULTIMEDIA ACTIVO]'
       },
       shaseki_bot: {
         title: 'NODO: Shaseki Bot',
-        type: '@n8n/n8n-nodes-langchain.agent (v3.1)',
-        desc: 'Agente Comercial Autónomo con RAG. Recibe el mensaje de texto, consulta la memoria de sesión, invoca obligatoriamente la herramienta vectorial "RAG", discrimina precios por categoría (Empresa, PyME, Particular) o activa el Fallback.',
-        code: `{\n  "promptType": "define",\n  "text": "={{ $json.messages[0].text.body }}",\n  "systemMessage": "Rol: Ejecutivo de Cuentas de Shaseki... [REGLA CRÍTICA: INVOCAR RAG]",\n  "tools_connected": ["RAG (retrieve-as-tool)"]\n}`,
-        status: '[✓ 200 OK — RAG TOOL INVOKED & RESPONSE SYNTHESIZED]'
-      },
-      in_the_membrane: {
-        title: 'SUB-NODO: in the membrane',
-        type: '@n8n/n8n-nodes-langchain.lmChatGroq',
-        desc: 'Motor de inferencia en la nube corriendo sobre unidades LPU de Groq. Configurado con temperatura 0.2 para garantizar respuestas deterministas apegadas al tarifario sin alucinar cifras.',
-        code: `{\n  "model": "openai/gpt-oss-20b",\n  "options": {\n    "temperature": 0.2\n  },\n  "calls_per_turn": "2 items (1: Tool Decision -> 2: Final Answer)"\n}`,
-        status: '[✓ 2 ITEMS — GROQ LPU INFERENCE < 400ms]'
-      },
-      memory_node: {
-        title: "SUB-NODO: Don't you forget about me",
-        type: '@n8n/n8n-nodes-langchain.memoryBufferWindow',
-        desc: 'Memoria conversacional volátil aislada por número de teléfono del cliente (Session Key). Permite que el usuario repregunte ("¿Y si soy PyME?") recordando de qué servicio estaban hablando.',
-        code: `{\n  "sessionIdType": "customKey",\n  "sessionKey": "={{ $('Mensaje Entrante').item.json.messages[0].from }}_v8",\n  "contextWindowLength": 12\n}`,
-        status: '[✓ 2 ITEMS — CONTEXT READ & UPDATED]'
-      },
-      rag_tool: {
-        title: 'SUB-NODO: RAG (Vector Store Tool)',
-        type: '@n8n/n8n-nodes-langchain.vectorStoreInMemory',
-        desc: 'Herramienta de recuperación semántica conectada al almacén en memoria "vector_store_key". Recupera los fragmentos más relevantes del tarifario de Shaseki para fundamentar la cotización.',
-        code: `{\n  "mode": "retrieve-as-tool",\n  "memoryKey": "vector_store_key",\n  "topK": 6,\n  "toolDescription": "Busca en el tarifario oficial de servicios creativos y digitales..."\n}`,
-        status: '[✓ 3-6 CHUNKS RETRIEVED FROM TARIFARIO]'
-      },
-      cohere_query: {
-        title: 'SUB-NODO: Cohere it!1',
-        type: '@n8n/n8n-nodes-langchain.embeddingsCohere',
-        desc: 'Genera el vector de 1024 dimensiones de la consulta del usuario en WhatsApp para compararlo por similitud coseno contra los vectores del tarifario.',
-        code: `{\n  "modelName": "embed-multilingual-v3.0",\n  "dimensions": 1024\n}`,
-        status: '[✓ 1024 DIMENSIONS VECTOR GENERATED]'
+        type: 'langchain.agent',
+        desc: 'Agente comercial autónomo. Invoca obligatoriamente la herramienta RAG, clasifica el perfil del cliente (Empresa, PyME, Particular) o dispara el Fallback.',
+        code: '{\n  "promptType": "define",\n  "text": "={{ $json.messages[0].text.body }}",\n  "tool": "RAG (retrieve-as-tool)"\n}',
+        status: '[✓ AGENTE CON TOMA DE DECISIONES ACTIVA]'
       },
       la_respuesta: {
         title: 'NODO: La Respuesta',
-        type: 'n8n-nodes-base.whatsApp',
-        desc: 'Canal de salida real: despacha la cotización o respuesta formateada con Markdown nativo de WhatsApp (*negritas* y listas limpias) al cliente a través de Meta Cloud API.',
-        code: `{\n  "operation": "send",\n  "phoneNumberId": "=1431351056730761",\n  "recipientPhoneNumber": "=542805123245",\n  "textBody": "={{ $json.output }}"\n}`,
-        status: '[✓ 1 ITEM — WHATSAPP MESSAGE DELIVERED]'
+        type: 'whatsApp (send)',
+        desc: 'Canal de salida real: envía la cotización formateada con negritas nativas de WhatsApp (*texto*) al usuario.',
+        code: '{\n  "operation": "send",\n  "recipientPhoneNumber": "=549XXXXXXXXXX",\n  "textBody": "={{ $json.output }}"\n}',
+        status: '[✓ SALIDA WHATSAPP BUSINESS OPERATIVA]'
       },
-      go_trigger: {
-        title: 'NODO: GO! (Disparador de Ingesta)',
-        type: 'n8n-nodes-base.manualTrigger',
-        desc: 'Inicia el pipeline de actualización de la base de conocimientos cada vez que el estudio ajusta los precios del tarifario por inflación o agrega nuevos servicios.',
-        code: `{\n  "trigger": "Manual Execution (o programable vía Google Drive Trigger)"\n}`,
-        status: '[✓ 1 ITEM — INGESTION PIPELINE STARTED]'
+      error_media: {
+        title: 'NODO: Aviso Solo Texto (Rama False)',
+        type: 'whatsApp (send)',
+        desc: 'Respuesta controlada cuando el usuario envía stickers, GIFs o imágenes, protegiendo al LLM de entradas nulas y ahorrando tokens.',
+        code: '{\n  "branch": "FALSE",\n  "textBody": "¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto..."\n}',
+        status: '[✓ MANEJO DE ERRORES #1 VERIFICADO]'
       },
-      drive_download: {
-        title: 'NODO: Look into your book of rules',
-        type: 'n8n-nodes-base.googleDrive (v3)',
-        desc: 'Fuente de Entrada #1: Conecta mediante OAuth2 a Google Drive y descarga el archivo binario fuente del tarifario (tarifario_shaseki.md).',
-        code: `{\n  "operation": "download",\n  "fileId": "1NOlj3dTn75lZrJsntIemYZpsZWchwPaK"\n}`,
-        status: '[✓ 1 ITEM — BINARY FILE DOWNLOADED]'
+      groq_llm: {
+        title: 'SUB-NODO: in the membrane (Groq LPU)',
+        type: 'lmChatGroq',
+        desc: 'Motor de inferencia de ultra baja latencia con Temperature 0.2 para evitar alucinaciones de precios.',
+        code: '{\n  "model": "openai/gpt-oss-20b",\n  "temperature": 0.2\n}',
+        status: '[✓ INFERENCIA CLOUD < 400ms]'
       },
-      extract_text: {
-        title: 'NODO: Tell me what you see',
-        type: 'n8n-nodes-base.extractFromFile',
-        desc: 'Extrae y decodifica el archivo descargado de Google Drive convirtiéndolo en una cadena de texto plano estructurada en Markdown lista para segmentar.',
-        code: `{\n  "operation": "text",\n  "output_property": "data"\n}`,
-        status: '[✓ 1 ITEM — PLAIN TEXT EXTRACTED]'
+      memory: {
+        title: "SUB-NODO: Don't you forget about me",
+        type: 'memoryBufferWindow',
+        desc: 'Memoria conversacional volátil aislada por usuario (12 turnos) para mantener contexto en repreguntas.',
+        code: '{\n  "sessionIdType": "customKey",\n  "sessionKey": "={{ $(\'Mensaje Entrante\').item.json.messages[0].from }}_v8",\n  "contextWindowLength": 12\n}',
+        status: '[✓ MEMORIA AISLADA POR SESIÓN]'
       },
-      vectores_insert: {
-        title: 'NODO: Vectores (In-Memory Vector Store)',
-        type: '@n8n/n8n-nodes-langchain.vectorStoreInMemory',
-        desc: 'Indexa los fragmentos vectorizados bajo la llave compartida "vector_store_key". Tiene activado clearStore: true para purgar versiones anteriores y garantizar idempotencia.',
-        code: `{\n  "mode": "insert",\n  "memoryKey": "vector_store_key",\n  "clearStore": true\n}`,
-        status: '[✓ VECTORS INSERTED & OLD STORE PURGED]'
-      },
-      dataloader_node: {
-        title: 'SUB-NODO: DATALOADER',
-        type: '@n8n/n8n-nodes-langchain.documentDefaultDataLoader',
-        desc: 'Recibe el texto extraído ($json.data) y lo estructura en documentos semánticos para su vectorización.',
-        code: `{\n  "jsonMode": "expressionData",\n  "jsonData": "={{ $json.data }}"\n}`,
-        status: '[✓ 4 ITEMS — DOCUMENT CHUNKS READY]'
-      },
-      cohere_ingest: {
-        title: 'SUB-NODO: Cohere it!',
-        type: '@n8n/n8n-nodes-langchain.embeddingsCohere',
-        desc: 'Transforma los bloques del tarifario en embeddings multilingües de 1024 dimensiones.',
-        code: `{\n  "modelName": "embed-multilingual-v3.0"\n}`,
-        status: '[✓ 4 ITEMS — EMBEDDINGS CREATED]'
-      },
-      error_multimedia: {
-        title: 'NODO: Si nos envían un sticker, GIF o Imagen',
-        type: 'n8n-nodes-base.whatsApp',
-        desc: 'Mitigación en Rama False: Cuando el usuario envía contenido multimedia sin cuerpo de texto, este nodo responde amablemente indicando que solo procesa texto, sin invocar al LLM.',
-        code: `{\n  "operation": "send",\n  "textBody": "¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto. Por favor, escríbenos tu consulta para poder ayudarte."\n}`,
-        status: '[✓ 1 ITEM — FALLBACK SENT (0 LLM TOKENS)]'
+      rag_tool: {
+        title: 'SUB-NODO: RAG (Vector Store Tool)',
+        type: 'vectorStoreInMemory',
+        desc: 'Recupera los topK=6 fragmentos más relevantes del tarifario vectorizado con Cohere (1024 dimensiones).',
+        code: '{\n  "mode": "retrieve-as-tool",\n  "memoryKey": "vector_store_key",\n  "topK": 6\n}',
+        status: '[✓ RECUPERACIÓN SEMÁNTICA ACTIVA]'
       }
     };
 
-    function inspectNode(nodeKey) {
-      const data = nodeDatabase[nodeKey];
-      if (!data) return;
-
-      document.querySelectorAll('.n8n-node-btn').forEach(btn => btn.classList.remove('selected-node'));
-      const activeBtn = document.getElementById('node-' + nodeKey);
-      if (activeBtn) activeBtn.classList.add('selected-node');
-
-      document.getElementById('insp-title').textContent = data.title;
-      document.getElementById('insp-type').textContent = data.type;
-      document.getElementById('insp-desc').textContent = data.desc;
-      document.getElementById('insp-code').textContent = data.code;
-      document.getElementById('insp-status').textContent = data.status;
+    function inspectNode(key, el) {
+      document.querySelectorAll('.svg-node').forEach(n => n.classList.remove('selected'));
+      if (el) el.classList.add('selected');
+      const spec = nodeSpecs[key];
+      if (!spec) return;
+      document.getElementById('insp-title').textContent = spec.title;
+      document.getElementById('insp-type').textContent = spec.type;
+      document.getElementById('insp-desc').textContent = spec.desc;
+      document.getElementById('insp-code').textContent = spec.code;
+      document.getElementById('insp-status').textContent = spec.status;
     }
 
-    // 4. Pane 3: WhatsApp Live Simulator
-    const waScenarios = {
+    const captureMeta = {
+      cap1: { src: 'capturas/01-ingesta-vectores.png', text: 'capturas/01-ingesta-vectores.png — Pipeline de Ingesta Google Drive -> Vectores ejecutado en verde.' },
+      cap2: { src: 'capturas/02-flujo-rag-whatsapp.png', text: 'capturas/02-flujo-rag-whatsapp.png — Ejecución completa en WhatsApp activando Shaseki Bot + RAG + Cohere.' },
+      cap3: { src: 'capturas/03-flujo-error-multimedia.png', text: 'capturas/03-flujo-error-multimedia.png — Activación de la rama FALSE ante envío de sticker/imagen.' }
+    };
+
+    function switchCanvasTab(mode, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const svgBox = document.getElementById('view-svg');
+      const capBox = document.getElementById('view-capture');
+      if (mode === 'svg') {
+        svgBox.style.display = 'block';
+        capBox.style.display = 'none';
+      } else {
+        svgBox.style.display = 'none';
+        capBox.style.display = 'block';
+        const img = document.getElementById('capture-img');
+        const fallback = document.getElementById('capture-fallback');
+        img.style.display = 'inline-block';
+        fallback.style.display = 'none';
+        img.src = captureMeta[mode].src;
+        document.getElementById('capture-caption-text').textContent = captureMeta[mode].text;
+      }
+    }
+
+    // 4. Emulador Interactivo de WhatsApp Cloud
+    const scenarios = {
       pyme: {
-        userMsg: 'Hola, tengo una PyME y quiero saber cuánto cuesta el diseño de una Nueva Identidad Corporativa y qué porcentaje de anticipo piden.',
-        botMsg: `¡Hola! Con gusto te confirmo los valores para una <strong>PyME</strong>:<br><br>• <strong>Precio Nueva Identidad Corporativa:</strong> $1.379.200<br>• <strong>Anticipo mínimo:</strong> 30 % del valor total.`,
+        user: 'Hola, tengo una PyME y quiero saber cuánto cuesta el diseño de una Nueva Identidad Corporativa y qué porcentaje de anticipo piden.',
+        bot: '¡Hola! Con gusto te confirmo los valores para una <strong>PyME</strong>:<br><br>• <strong>Precio Nueva Identidad Corporativa:</strong> $1.379.200<br>• <strong>Anticipo mínimo:</strong> 30 % del valor total.',
         badge: 'RAG_RETRIEVAL_OK',
-        badgeClass: 'text-[10px] px-1.5 py-0.5 bg-omarchy-green/15 text-omarchy-green rounded',
-        trace: `[19:18:10] WEBHOOK_IN: from="542805123245" type="text"\n[19:18:10] IF_NODE [valido si es texto]: TRUE\n[19:18:10] AGENT [Shaseki Bot]: Detectado perfil = PyME (Cat. B)\n[19:18:11] TOOL_CALL -> RAG(query="Nueva Identidad Corporativa anticipo")\n[19:18:11] VECTOR_STORE: 3 fragmentos recuperados (Identidad + Parámetros)\n[19:18:11] WHATSAPP_SEND [La Respuesta]: 200 OK`
+        badgeColor: 'var(--accent-green)',
+        log: '[19:18:10] WEBHOOK_IN: from="549XXXXXXXXXX" type="text"\n[19:18:10] IF_NODE [valido si es texto]: TRUE\n[19:18:10] AGENT [Shaseki Bot]: Perfil detectado = PyME (Cat. B)\n[19:18:11] TOOL_CALL -> RAG(query="Nueva Identidad Corporativa anticipo")\n[19:18:11] VECTOR_STORE: 3 chunks recuperados (Identidad + Parámetros)\n[19:18:11] WHATSAPP_SEND [La Respuesta]: 200 OK'
       },
       nocat: {
-        userMsg: 'Hola, ¿cuánto cuesta el diseño de un sitio web One Page y su maquetación?',
-        botMsg: `¡Hola! Te detallo los aranceles oficiales de Shaseki para un sitio web <strong>"One Page"</strong> según la categoría de cliente:<br><br><strong>1. Diseño sitio WEB "One Page":</strong><br>- <strong>Empresa:</strong> $411.900<br>- <strong>PyME:</strong> $305.100<br>- <strong>Particular:</strong> $198.400<br><br><strong>2. Maquetación sitio WEB "One Page":</strong><br>- <strong>Empresa:</strong> $1.192.000<br>- <strong>PyME:</strong> $883.000<br>- <strong>Particular:</strong> $573.900<br><br>¿En cuál de las tres categorías (<strong>Empresa</strong>, <strong>PyME</strong> o <strong>Particular</strong>) se encuadra tu proyecto para afinar el presupuesto?`,
+        user: 'Hola, ¿cuánto cuesta una Nueva Identidad Corporativa y un sitio web One Page?',
+        bot: '¡Hola! Te detallo los aranceles oficiales de Shaseki según categoría de cliente:<br><br><strong>1. Nueva Identidad Corporativa:</strong><br>- <strong>Empresa:</strong> $1.861.900<br>- <strong>PyME:</strong> $1.379.200<br>- <strong>Particular:</strong> $896.500<br><br><strong>2. Diseño sitio WEB "One Page":</strong><br>- <strong>Empresa:</strong> $411.900<br>- <strong>PyME:</strong> $305.100<br>- <strong>Particular:</strong> $198.400<br><br>¿En cuál de las tres categorías (<strong>Empresa</strong>, <strong>PyME</strong> o <strong>Particular</strong>) se encuadra tu proyecto?',
         badge: 'MULTI_TIER_QUOTE',
-        badgeClass: 'text-[10px] px-1.5 py-0.5 bg-omarchy-cyan/15 text-omarchy-cyan rounded',
-        trace: `[19:20:04] WEBHOOK_IN: from="542805123245" type="text"\n[19:20:04] IF_NODE [valido si es texto]: TRUE\n[19:20:04] AGENT [Shaseki Bot]: Perfil no especificado -> Regla #2 (Desglose A/B/C)\n[19:20:05] TOOL_CALL -> RAG(query="Diseño Maquetación sitio WEB One Page")\n[19:20:05] VECTOR_STORE: Rubro 7 (Web) recuperado con éxito\n[19:20:05] WHATSAPP_SEND [La Respuesta]: 200 OK`
+        badgeColor: 'var(--accent-cyan)',
+        log: '[19:20:04] WEBHOOK_IN: from="549XXXXXXXXXX" type="text"\n[19:20:04] IF_NODE [valido si es texto]: TRUE\n[19:20:04] AGENT [Shaseki Bot]: Sin perfil declarado -> Regla #2 (Desglose A/B/C)\n[19:20:05] TOOL_CALL -> RAG(query="Nueva Identidad Corporativa Web One Page")\n[19:20:05] VECTOR_STORE: Rubros 1 (Identidad) y 7 (Web) recuperados\n[19:20:05] WHATSAPP_SEND [La Respuesta]: 200 OK'
       },
       fallback: {
-        userMsg: '¿Y qué pasa si necesito pausar el proyecto por 20 días o pagar con criptomonedas?',
-        botMsg: `Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.`,
+        user: '¿Y qué pasa si necesito pausar el proyecto por 20 días o pagar con criptomonedas?',
+        bot: 'Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.',
         badge: 'FALLBACK_PROTOCOL',
-        badgeClass: 'text-[10px] px-1.5 py-0.5 bg-omarchy-yellow/15 text-omarchy-yellow rounded',
-        trace: `[19:21:15] WEBHOOK_IN: from="542805123245" type="text"\n[19:21:15] IF_NODE [valido si es texto]: TRUE\n[19:21:16] TOOL_CALL -> RAG(query="pausa proyecto 20 dias criptomonedas")\n[19:21:16] VECTOR_STORE: 0 coincidencias en tarifario_shaseki.md\n[19:21:16] GUARDRAIL_TRIGGERED: Regla #3 (Protocolo de Fallback determinista)\n[19:21:16] WHATSAPP_SEND [La Respuesta]: 200 OK`
+        badgeColor: 'var(--accent-yellow)',
+        log: '[19:21:15] WEBHOOK_IN: from="549XXXXXXXXXX" type="text"\n[19:21:15] IF_NODE [valido si es texto]: TRUE\n[19:21:16] TOOL_CALL -> RAG(query="pausa proyecto 20 dias criptomonedas")\n[19:21:16] VECTOR_STORE: 0 coincidencias en tarifario_shaseki.md\n[19:21:16] GUARDRAIL_TRIGGERED: Regla #3 (Protocolo de Fallback)\n[19:21:16] WHATSAPP_SEND [La Respuesta]: 200 OK'
       },
       sticker: {
-        userMsg: '🖼 [STICKER_ENVIADO: image/webp — animation_id: 994812]',
-        botMsg: `¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto. Por favor, escríbenos tu consulta para poder ayudarte.`,
+        user: '🖼 [STICKER_ENVIADO: image/webp]',
+        bot: '¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto. Por favor, escríbenos tu consulta para poder ayudarte.',
         badge: 'ERROR_BRANCH_FALSE',
-        badgeClass: 'text-[10px] px-1.5 py-0.5 bg-omarchy-red/15 text-omarchy-red rounded',
-        trace: `[19:22:01] WEBHOOK_IN: from="542805123245" type="sticker"\n[19:22:01] IF_NODE [valido si es texto]: FALSE ($json.messages[0].text.body is undefined)\n[19:22:01] ROUTING -> Rama False [Si nos envían un sticker, GIF o Imagen]\n[19:22:01] LLM_BYPASSED: 0 llamadas a Groq / 0 tokens consumidos\n[19:22:01] WHATSAPP_SEND: Mensaje de validación entregado (200 OK)`
+        badgeColor: 'var(--accent-red)',
+        log: '[19:22:01] WEBHOOK_IN: from="549XXXXXXXXXX" type="sticker"\n[19:22:01] IF_NODE [valido si es texto]: FALSE (text.body is undefined)\n[19:22:01] ROUTING -> Rama False [Aviso Solo Texto]\n[19:22:01] LLM_BYPASSED: 0 llamadas a Groq / 0 tokens consumidos\n[19:22:01] WHATSAPP_SEND: Mensaje de validación entregado (200 OK)'
       }
     };
 
-    function appendWaBubbles(userHtml, botHtml) {
-      const container = document.getElementById('wa-chat-messages');
-      const realCapture = document.getElementById('wa-real-capture-view');
-      if (!realCapture.classList.contains('hidden')) {
-        toggleWaScreenshotModal();
-      }
+    function runWaScenario(key) {
+      const sc = scenarios[key];
+      if (!sc) return;
+      const chat = document.getElementById('wa-chat-stream');
+      const status = document.getElementById('wa-typing-status');
+      const nowTime = new Date().toTimeString().slice(0, 5);
 
-      const now = new Date();
-      const hm = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'wa-bubble wa-bubble-user';
+      userDiv.innerHTML = sc.user + '<span class="wa-time">' + nowTime + ' ✓✓</span>';
+      chat.appendChild(userDiv);
+      chat.scrollTop = chat.scrollHeight;
 
-      const outDiv = document.createElement('div');
-      outDiv.className = 'flex justify-end';
-      outDiv.innerHTML = `<div class="wa-bubble-out text-white text-xs p-2.5 rounded-[4px] max-w-[82%]"><div>${userHtml}</div><div class="text-[10px] text-gray-300 text-right mt-1">${hm} ✓✓</div></div>`;
-      container.appendChild(outDiv);
+      status.textContent = 'escribiendo...';
+      setTimeout(() => {
+        status.textContent = 'Cuenta de empresa • en línea';
+        const botDiv = document.createElement('div');
+        botDiv.className = 'wa-bubble wa-bubble-bot';
+        botDiv.innerHTML = sc.bot + '<span class="wa-time">' + nowTime + '</span>';
+        chat.appendChild(botDiv);
+        chat.scrollTop = chat.scrollHeight;
 
-      const inDiv = document.createElement('div');
-      inDiv.className = 'flex justify-start';
-      inDiv.innerHTML = `<div class="wa-bubble-in text-gray-100 text-xs p-2.5 rounded-[4px] max-w-[82%]"><div>${botHtml}</div><div class="text-[10px] text-gray-400 text-right mt-1">${hm}</div></div>`;
-      container.appendChild(inDiv);
-
-      container.scrollTop = container.scrollHeight;
+        const badge = document.getElementById('log-badge');
+        badge.textContent = sc.badge;
+        badge.style.color = sc.badgeColor;
+        document.getElementById('wa-trace-box').textContent = sc.log;
+      }, 450);
     }
 
-    function runWaSimulation(key) {
-      const s = waScenarios[key];
-      if (!s) return;
-      appendWaBubbles(s.userMsg, s.botMsg);
-      document.getElementById('wa-terminal-trace').textContent = s.trace;
-      const badge = document.getElementById('sim-trace-badge');
-      badge.textContent = s.badge;
-      badge.className = s.badgeClass;
-    }
-
-    // Mini RAG Lookup for free-text input in the WhatsApp emulator
-    const miniTarifarioCatalog = [
-      { keywords: ['identidad', 'corporativa'], name: 'Nueva Identidad Corporativa', emp: '$1.861.900', pyme: '$1.379.200', part: '$896.500' },
-      { keywords: ['logo', 'logotipo', 'isotipo'], name: 'Nuevo logotipo / isotipo / imagotipo', emp: '$743.700', pyme: '$550.900', part: '$358.100' },
-      { keywords: ['flyer', 'volante'], name: 'Volante / Flyer frente y dorso', emp: '$302.700', pyme: '$224.200', part: '$145.800' },
-      { keywords: ['triptico', 'tríptico', 'folleto'], name: 'Folleto tríptico', emp: '$567.100', pyme: '$420.100', part: '$273.100' },
-      { keywords: ['redes', 'rrss', 'community'], name: 'Administración / Gestión ESTÁNDAR de RRSS (x mes)', emp: '$431.100', pyme: '$319.300', part: '$207.600' },
-      { keywords: ['catalogo', 'catálogo', 'editorial'], name: 'Catálogo de productos (hasta 20 págs.)', emp: '$1.718.000', pyme: '$1.272.600', part: '$827.200' },
-      { keywords: ['web', 'landing', 'one page'], name: 'Diseño sitio WEB "One Page"', emp: '$411.900', pyme: '$305.100', part: '$198.400' },
-      { keywords: ['tienda', 'ecommerce', 'online'], name: 'Armado tienda WEB online (hasta 30 productos)', emp: '$865.300', pyme: '$641.000', part: '$416.700' },
-      { keywords: ['ux', 'ui', 'app'], name: 'Diseño APP UX / UI (hasta 5 pantallas)', emp: '$1.297.400', pyme: '$961.100', part: '$624.700' },
-      { keywords: ['3d', 'modelado', 'envase'], name: 'Modelado 3D de envase', emp: '$321.200', pyme: '$237.900', part: '$154.700' },
-      { keywords: ['etiqueta', 'packaging', 'vino'], name: 'Etiqueta compuesta (Packaging)', emp: '$1.666.700', pyme: '$1.234.600', part: '$802.500' },
-      { keywords: ['hora', 'gremio', 'anticipo'], name: 'Parámetros Generales', emp: 'Hora: $30.500 | Anticipo: 30% | Gremio: 20% | Adaptaciones: 50%', pyme: 'Hora: $30.500 | Anticipo: 30%', part: 'Hora: $30.500 | Anticipo: 30%' }
+    // 5. Explorador Interactivo del Tarifario
+    const tarifarioRows = [
+      { rubro: '0. Parámetros', item: 'Hora de Trabajo / Anticipo (30%) / Gremio (20%)', emp: '$30.500 /h', pyme: '$30.500 /h', part: '$30.500 /h' },
+      { rubro: '1. Identidad', item: 'Nueva Identidad Corporativa (+ Manual y 5 aplic.)', emp: '$1.861.900', pyme: '$1.379.200', part: '$896.500' },
+      { rubro: '1. Identidad', item: 'Nuevo logotipo / isotipo / imagotipo', emp: '$743.700', pyme: '$550.900', part: '$358.100' },
+      { rubro: '2. Papelería', item: 'Papelería básica (hasta 5 piezas)', emp: '$599.700', pyme: '$444.200', part: '$288.800' },
+      { rubro: '3. Publicidad', item: 'Volante / Flyer frente y dorso', emp: '$302.700', pyme: '$224.200', part: '$145.800' },
+      { rubro: '3. Publicidad', item: 'Folleto tríptico', emp: '$567.100', pyme: '$420.100', part: '$273.100' },
+      { rubro: '4. Community Manager', item: 'Administración / Gestión ESTÁNDAR de RRSS (x mes)', emp: '$431.100', pyme: '$319.300', part: '$207.600' },
+      { rubro: '5. Editorial', item: 'Catálogo de productos (hasta 20 páginas)', emp: '$1.718.000', pyme: '$1.272.600', part: '$827.200' },
+      { rubro: '6. Señalización', item: 'Diseño de Sistema señalético (hasta 10 piezas)', emp: '$2.013.400', pyme: '$1.491.400', part: '$969.500' },
+      { rubro: '7. Web', item: 'Diseño sitio WEB "One Page"', emp: '$411.900', pyme: '$305.100', part: '$198.400' },
+      { rubro: '7. Web', item: 'Maquetación sitio WEB "One Page"', emp: '$1.192.000', pyme: '$883.000', part: '$573.900' },
+      { rubro: '7. Web', item: 'Diseño APP UX / UI (hasta 5 pantallas)', emp: '$1.297.400', pyme: '$961.100', part: '$624.700' },
+      { rubro: '8. Audiovisual', item: 'Spot publicitario / animación complejidad alta', emp: '$839.700', pyme: '$622.000', part: '$404.300' },
+      { rubro: '9. Sonido', item: 'Composición y grabación de música original', emp: '$524.400', pyme: '$388.500', part: '$252.500' },
+      { rubro: '10. Fotografía', item: 'Filmación FullHD (costo x hora)', emp: '$247.800', pyme: '$183.600', part: '$119.300' },
+      { rubro: '11. Textil', item: 'Sistema de uniforme / vestuario completo', emp: '$1.011.400', pyme: '$749.200', part: '$487.000' },
+      { rubro: '12. Promoción', item: 'Merchandising (hasta 10 piezas)', emp: '$687.700', pyme: '$509.400', part: '$331.200' },
+      { rubro: '13. Ilustración', item: 'Animación de personaje o escenario (60s)', emp: '$2.036.500', pyme: '$1.508.600', part: '$980.600' },
+      { rubro: '14. Packaging', item: 'Etiqueta compuesta (Packaging)', emp: '$1.666.700', pyme: '$1.234.600', part: '$802.500' },
+      { rubro: '15. Diseño Industrial', item: 'Modelado 3D de envase', emp: '$321.200', pyme: '$237.900', part: '$154.700' }
     ];
 
-    function handleCustomWaQuery() {
-      const input = document.getElementById('custom-wa-input');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-
-      const lower = text.toLowerCase();
-      const matched = miniTarifarioCatalog.find(item => item.keywords.some(k => lower.includes(k)));
-
-      if (matched) {
-        let reply = '';
-        if (lower.includes('pyme')) {
-          reply = `¡Hola! Con gusto te confirmo el valor para una <strong>PyME</strong>:<br><br>- <strong>${matched.name}:</strong> ${matched.pyme}<br>- <strong>Anticipo mínimo:</strong> 30 % del valor nominal.`;
-        } else if (lower.includes('empresa')) {
-          reply = `¡Hola! Con gusto te confirmo el valor para <strong>Empresa (Cat. A)</strong>:<br><br>- <strong>${matched.name}:</strong> ${matched.emp}<br>- <strong>Anticipo mínimo:</strong> 30 % del valor nominal.`;
-        } else if (lower.includes('particular')) {
-          reply = `¡Hola! Con gusto te confirmo el valor para cliente <strong>Particular (Cat. C)</strong>:<br><br>- <strong>${matched.name}:</strong> ${matched.part}<br>- <strong>Anticipo mínimo:</strong> 30 % del valor nominal.`;
-        } else {
-          reply = `¡Hola! Te comparto los valores del tarifario oficial de Shaseki para <strong>${matched.name}</strong> según el tipo de cliente:<br><br>- <strong>Empresa:</strong> ${matched.emp}<br>- <strong>PyME:</strong> ${matched.pyme}<br>- <strong>Particular:</strong> ${matched.part}<br><br>¿En cuál de las categorías se encuadra tu proyecto para afinar el presupuesto?`;
-        }
-        appendWaBubbles(text, reply);
-        document.getElementById('wa-terminal-trace').textContent = `[LIVE_SIM] WEBHOOK_IN: "${text}"\n[LIVE_SIM] IF_NODE [valido si es texto]: TRUE\n[LIVE_SIM] TOOL_CALL -> RAG(query="${matched.name}") -> MATCH FOUND\n[LIVE_SIM] WHATSAPP_SEND: 200 OK`;
-      } else {
-        appendWaBubbles(
-          text,
-          'Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.'
-        );
-        document.getElementById('wa-terminal-trace').textContent = `[LIVE_SIM] WEBHOOK_IN: "${text}"\n[LIVE_SIM] TOOL_CALL -> RAG(query="${text}") -> NO MATCH IN TARIFARIO\n[LIVE_SIM] FALLBACK PROTOCOL ACTIVATED -> Derivado a dirección Shaseki`;
-      }
+    function filterTarifario() {
+      const q = (document.getElementById('tarifario-filter').value || '').toLowerCase().trim();
+      const tbody = document.getElementById('tarifario-tbody');
+      const filtered = tarifarioRows.filter(r =>
+        !q || r.rubro.toLowerCase().includes(q) || r.item.toLowerCase().includes(q)
+      );
+      tbody.innerHTML = filtered.map(r => `
+        <tr>
+          <td style="color: var(--accent-cyan); font-weight: 700;">${r.rubro}</td>
+          <td>${r.item}</td>
+          <td style="color: var(--accent-green); font-weight: 700;">${r.emp}</td>
+          <td style="color: var(--accent-yellow); font-weight: 700;">${r.pyme}</td>
+          <td style="color: var(--accent-purple); font-weight: 700;">${r.part}</td>
+        </tr>
+      `).join('');
     }
+    filterTarifario();
 
-    function resetWaChat() {
-      const container = document.getElementById('wa-chat-messages');
-      container.innerHTML = `<div class="text-center my-1"><span class="inline-block bg-[#182229] text-[#8696a0] text-[11px] px-3 py-1 rounded-[4px] border border-[#2a3942]">Chat reiniciado. Selecciona un Test a la izquierda o escribe abajo.</span></div>`;
+    // 6. Simulador de Escalabilidad 10x
+    function updateScaleSim() {
+      const vol = Number(document.getElementById('sim-slider').value);
+      const cacheOn = document.getElementById('sim-cache-toggle').checked;
+      document.getElementById('sim-vol-text').textContent = vol + ' consultas/día (' + (vol / 40).toFixed(1) + 'x)';
+
+      const latency = cacheOn ? 250 : Math.round(1450 + (vol * 1.6));
+      const errors = cacheOn ? 0.4 : Number(((vol / 400) * 10.5).toFixed(1));
+      const tokens = cacheOn ? Math.round(vol * 480) : Math.round(vol * 1200);
+
+      const latEl = document.getElementById('metric-latency');
+      const errEl = document.getElementById('metric-errors');
+      const tokEl = document.getElementById('metric-tokens');
+
+      latEl.textContent = latency + ' ms' + (cacheOn ? ' (-82%)' : ' (Sin Caché)');
+      latEl.style.color = cacheOn ? 'var(--accent-green)' : 'var(--accent-red)';
+      document.getElementById('bar-latency').style.width = Math.min(100, (latency / 2200) * 100) + '%';
+      document.getElementById('bar-latency').style.backgroundColor = cacheOn ? 'var(--accent-green)' : 'var(--accent-red)';
+
+      errEl.textContent = errors + ' %';
+      errEl.style.color = cacheOn ? 'var(--accent-green)' : 'var(--accent-red)';
+      document.getElementById('bar-errors').style.width = Math.min(100, errors * 7) + '%';
+      document.getElementById('bar-errors').style.backgroundColor = cacheOn ? 'var(--accent-green)' : 'var(--accent-red)';
+
+      tokEl.textContent = tokens.toLocaleString('es-AR') + ' tokens/día';
+      document.getElementById('bar-tokens').style.width = Math.min(100, (tokens / 480000) * 100) + '%';
+      document.getElementById('bar-tokens').style.backgroundColor = cacheOn ? 'var(--accent-cyan)' : 'var(--accent-yellow)';
     }
+    updateScaleSim();
 
-    function toggleWaScreenshotModal() {
-      const chat = document.getElementById('wa-chat-messages');
-      const cap = document.getElementById('wa-real-capture-view');
-      if (cap.classList.contains('hidden')) {
-        chat.classList.add('hidden');
-        cap.classList.remove('hidden');
-        cap.classList.add('flex');
-      } else {
-        cap.classList.add('hidden');
-        cap.classList.remove('flex');
-        chat.classList.remove('hidden');
-      }
-    }
-
-    // 5. Pane 5: 10x Scalability Benchmark Calculator
-    function update10xBenchmark() {
-      const vol = parseInt(document.getElementById('sim-vol-slider').value, 10);
-      const cacheOn = document.getElementById('toggle-cache').checked;
-      const rateLimitOn = document.getElementById('toggle-ratelimit').checked;
-
-      const mult = (vol / 40).toFixed(1);
-      document.getElementById('sim-vol-label').textContent = `${vol} consultas/día (${mult}x)`;
-
-      // Base metrics (without cache or rate limiting)
-      const baseLat = Math.round(1420 + (vol * 1.1));
-      const baseErr = Math.min(14.5, (0.4 + Math.pow(vol / 110, 1.85))).toFixed(1);
-      const baseTok = vol * 1200;
-
-      // Optimized metrics
-      const optLat = cacheOn ? Math.round(baseLat * 0.16) : baseLat;
-      const optErr = rateLimitOn ? (vol > 250 ? 0.3 : 0.1) : baseErr;
-      const optTok = cacheOn ? Math.round(baseTok * 0.4) : baseTok;
-
-      document.getElementById('val-lat-base').textContent = baseLat.toLocaleString('es-AR') + ' ms';
-      document.getElementById('val-lat-opt').textContent = optLat.toLocaleString('es-AR') + ' ms';
-      document.getElementById('bar-lat-base').style.width = Math.min(100, Math.round(baseLat / 22)) + '%';
-      document.getElementById('bar-lat-opt').style.width = Math.min(100, Math.round(optLat / 22)) + '%';
-
-      document.getElementById('val-err-base').textContent = baseErr + ' %';
-      document.getElementById('val-err-opt').textContent = optErr + ' %';
-      document.getElementById('bar-err-base').style.width = Math.min(100, Math.round(baseErr * 6.5)) + '%';
-      document.getElementById('bar-err-opt').style.width = Math.max(3, Math.round(optErr * 6.5)) + '%';
-
-      document.getElementById('val-tok-base').textContent = baseTok.toLocaleString('es-AR') + ' /día';
-      document.getElementById('val-tok-opt').textContent = optTok.toLocaleString('es-AR') + ' /día';
-      document.getElementById('bar-tok-base').style.width = Math.min(100, Math.round((baseTok / 480000) * 100)) + '%';
-      document.getElementById('bar-tok-opt').style.width = Math.min(100, Math.round((optTok / 480000) * 100)) + '%';
-
-      const statusTag = document.getElementById('bench-status-tag');
-      if (cacheOn && rateLimitOn) {
-        statusTag.textContent = 'CACHE + RATE LIMIT ACTIVOS (ÓPTIMO)';
-        statusTag.className = 'text-[10px] px-2 py-0.5 bg-omarchy-green/20 text-omarchy-green font-bold rounded';
-      } else if (cacheOn || rateLimitOn) {
-        statusTag.textContent = 'OPTIMIZACIÓN PARCIAL ACTIVA';
-        statusTag.className = 'text-[10px] px-2 py-0.5 bg-omarchy-yellow/20 text-omarchy-yellow font-bold rounded';
-      } else {
-        statusTag.textContent = 'SIN OPTIMIZACIÓN (RIESGO DE SATURACIÓN)';
-        statusTag.className = 'text-[10px] px-2 py-0.5 bg-omarchy-red/20 text-omarchy-red font-bold rounded';
-      }
-    }
-
-    // 6. Clipboard & Download Utilities (Workflow JSON + Tarifario MD)
-    function copyTextToClipboard(text, btnId, successLabel) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-
-      if (btnId) {
-        const btn = document.getElementById(btnId);
-        const orig = btn.innerHTML;
-        btn.innerHTML = successLabel;
-        setTimeout(() => { btn.innerHTML = orig; }, 2200);
-      }
-    }
-
+    // 7. Copiar System Prompt & Descarga Directa de Artefactos Anonimizados
     function copySystemPrompt() {
       const text = document.getElementById('system-prompt-text').textContent;
-      copyTextToClipboard(text, 'btn-copy-prompt', '[ ✓ SYSTEM PROMPT COPIADO ]');
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('System Prompt copiado al portapapeles');
     }
 
-    // Complete n8n Workflow JSON embedded for 1-click export
-    const shasekiWorkflowJSON = {
-      "name": "Entrega Final - Shaseki Bot RAG WhatsApp Cloud",
-      "nodes": [
-        {
-          "parameters": {},
-          "type": "n8n-nodes-base.manualTrigger",
-          "typeVersion": 1,
-          "position": [-1792, -1872],
-          "id": "51460855-6985-43e5-a117-51e01d5ec71c",
-          "name": "GO!"
-        },
-        {
-          "parameters": {
-            "modelName": "embed-multilingual-v3.0"
-          },
-          "id": "eead71a0-b541-4506-bd7c-d32e7a8b97c9",
-          "name": "Cohere it!",
-          "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
-          "typeVersion": 1,
-          "position": [-1024, -1504],
-          "credentials": {
-            "cohereApi": {
-              "id": "9q3uareNqE2rA9UG",
-              "name": "Cohere account"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "model": "openai/gpt-oss-20b",
-            "options": {
-              "temperature": 0.2
-            }
-          },
-          "id": "7932a3ee-bb5c-46ad-95b2-dbe0304d9f88",
-          "name": "in the membrane",
-          "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
-          "typeVersion": 1,
-          "position": [-816, -832],
-          "credentials": {
-            "groqApi": {
-              "id": "ftrHsyfJkpoHUGIf",
-              "name": "Groq account"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "operation": "download",
-            "fileId": {
-              "__rl": true,
-              "value": "1NOlj3dTn75lZrJsntIemYZpsZWchwPaK",
-              "mode": "list"
-            },
-            "options": {}
-          },
-          "type": "n8n-nodes-base.googleDrive",
-          "typeVersion": 3,
-          "position": [-1552, -1696],
-          "id": "7eec74d3-2ad5-403a-a14b-a944176950a2",
-          "name": "Look into your book of rules",
-          "credentials": {
-            "googleDriveOAuth2Api": {
-              "id": "UTVZCo69fqJwfFe2",
-              "name": "Google Drive account"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "operation": "text",
-            "options": {}
-          },
-          "type": "n8n-nodes-base.extractFromFile",
-          "typeVersion": 1.2,
-          "position": [-1296, -1792],
-          "id": "69efd4bb-70aa-4f57-bee2-497959b16649",
-          "name": "Tell me what you see"
-        },
-        {
-          "parameters": {
-            "mode": "insert",
-            "memoryKey": {
-              "__rl": true,
-              "mode": "list",
-              "value": "vector_store_key"
-            },
-            "clearStore": true
-          },
-          "id": "87905256-9960-4ae1-a53f-fa2d0539d6ba",
-          "name": "Vectores",
-          "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
-          "typeVersion": 1.3,
-          "position": [-912, -1776]
-        },
-        {
-          "parameters": {
-            "jsonMode": "expressionData",
-            "jsonData": "={{ $json.data }}",
-            "options": {}
-          },
-          "id": "c533614b-3234-4b2e-9acc-f58d9365fd75",
-          "name": "DATALOADER",
-          "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-          "typeVersion": 1.1,
-          "position": [-864, -1504]
-        },
-        {
-          "parameters": {
-            "sessionIdType": "customKey",
-            "sessionKey": "={{ $('Mensaje Entrante').item.json.messages[0].from }}_v8",
-            "contextWindowLength": 12
-          },
-          "id": "cdc1ffd3-7566-4650-92c6-526c760253e5",
-          "name": "Don't you forget about me",
-          "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-          "typeVersion": 1.4,
-          "position": [-640, -832]
-        },
-        {
-          "parameters": {
-            "modelName": "embed-multilingual-v3.0"
-          },
-          "id": "8a0d87c0-0649-425f-9148-8074ef4f77d5",
-          "name": "Cohere it!1",
-          "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
-          "typeVersion": 1,
-          "position": [-288, -752],
-          "credentials": {
-            "cohereApi": {
-              "id": "9q3uareNqE2rA9UG",
-              "name": "Cohere account"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "updates": ["messages"],
-            "options": {}
-          },
-          "id": "38c1e3f4-be2c-41d0-83a9-eee3567b2f76",
-          "name": "Mensaje Entrante",
-          "type": "n8n-nodes-base.whatsAppTrigger",
-          "typeVersion": 1,
-          "position": [-1520, -1232],
-          "webhookId": "ee405cc6-d7ce-4a78-a467-007df86aa567",
-          "credentials": {
-            "whatsAppTriggerApi": {
-              "id": "U4M7tTgTn5lwSgLL",
-              "name": "WhatsApp OAuth account"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "conditions": {
-              "options": {
-                "caseSensitive": true,
-                "leftValue": "",
-                "typeValidation": "strict",
-                "version": 4
-              },
-              "conditions": [
-                {
-                  "id": "75aab030-410c-4fcb-8a39-737e8f7b18c1",
-                  "leftValue": "={{ $json.messages[0].text.body }}",
-                  "rightValue": "",
-                  "operator": {
-                    "type": "string",
-                    "operation": "exists",
-                    "singleValue": true
-                  }
-                }
-              ],
-              "combinator": "and"
-            },
-            "options": {}
-          },
-          "type": "n8n-nodes-base.if",
-          "typeVersion": 2.4,
-          "position": [-1104, -1152],
-          "id": "0ea4745a-611b-48b4-9d42-6bab0fa38db6",
-          "name": "valido si es texto"
-        },
-        {
-          "parameters": {
-            "promptType": "define",
-            "text": "={{ $json.messages[0].text.body }}",
-            "options": {
-              "systemMessage": "Rol: Eres el Asistente Comercial y Ejecutivo de Cuentas del estudio de diseño \"Shaseki\". Atiendes a clientes y prospectos a través de WhatsApp Business.\n\nREGLA CRÍTICA DE EJECUCIÓN (OBLIGATORIA):\nAntes de redactar cualquier respuesta sobre precios, aranceles, servicios, anticipos o condiciones de trabajo, DEBES INVOCAR SIEMPRE la herramienta \"RAG\" enviando como query el nombre del servicio consultado por el usuario. NUNCA respondas de memoria ni asumas que no tienes la información sin haber ejecutado primero la herramienta \"RAG\".\n\nTono y Estilo:\n- Mantén un tono estrictamente profesional, cordial, consultivo y ejecutivo, adaptado para el cliente final de WhatsApp.\n- Sé breve, claro y directo.\n- Formato nativo de WhatsApp: Para hacer negritas, usa ESTRICTAMENTE un solo asterisco por lado (ejemplo correcto: *Presupuesto* / ejemplo prohibido: **Presupuesto**). Para listas, usa únicamente guiones (-) sin asteriscos y saltos de línea limpios.\n\nLógica de Cotización según Tipo de Cliente (Empresa, PyME, Particular):\nEl tarifario de Shaseki estructura los aranceles en tres categorías de cliente: *Empresa* (Categoría A), *PyME* (Categoría B) y *Particular* (Categoría C), además de valores generales como *Hora de Trabajo*, *Adaptaciones* (50%), *Gremio* (20%) y *Anticipo* (30%).\n1. Si el usuario especifica su tipo de perfil en la consulta (ej. \"Soy una PyME\", \"Es para mi empresa\" o \"Soy un cliente particular\"), infórmale directamente el precio exacto correspondiente a su categoría.\n2. Si el usuario consulta el precio de un servicio pero NO aclara qué tipo de cliente es, preséntale de forma ordenada los 3 valores disponibles (*Empresa*, *PyME* y *Particular*) para ese trabajo y pregúntale cordialmente al final en cuál de las categorías se encuadra su proyecto para afinar el presupuesto.\n\nRestricciones y Reglas de Negocio:\n1. Responde basándote ESTRICTAMENTE en los fragmentos que te devuelva la herramienta \"RAG\".\n2. NO inventes ni recalcules tarifas ni condiciones fuera de lo estipulado en el tarifario.\n3. Protocolo de Fallback (Fuera de alcance): Si tras ejecutar la herramienta \"RAG\" el servicio o dato solicitado no figura en los fragmentos devueltos, responde EXACTAMENTE con este mensaje profesional:\n\"Para brindarte una respuesta precisa sobre ese requerimiento particular, voy a derivar tu consulta directamente con la dirección de Shaseki para que evalúen el caso y te contacten a la brevedad.\""
-            }
-          },
-          "id": "1d7efa6c-0b36-4cad-aae3-04965984741d",
-          "name": "Shaseki Bot",
-          "type": "@n8n/n8n-nodes-langchain.agent",
-          "typeVersion": 3.1,
-          "position": [-736, -1040]
-        },
-        {
-          "parameters": {
-            "mode": "retrieve-as-tool",
-            "toolDescription": "Busca en el tarifario oficial de servicios creativos y digitales del estudio Shaseki. Contiene los precios en pesos (ARS) discriminados por tipo de cliente (Empresa, PyME y Particular) para Identidad, Papelería, Publicidad, Community Manager, Editorial, Señalización, Web, Audiovisual, Sonido, Fotografía, Textil, Promoción, Ilustración, Packaging y Diseño Industrial, así como el valor de la Hora de Trabajo, Adaptaciones, Gremio y Anticipo. Úsalo siempre para consultar precios de cualquier trabajo o servicio.",
-            "memoryKey": {
-              "__rl": true,
-              "value": "vector_store_key",
-              "mode": "list",
-              "cachedResultName": "vector_store_key"
-            },
-            "topK": 6
-          },
-          "id": "0a8cd299-34a5-4e62-86fb-cebcf822e5cd",
-          "name": "RAG",
-          "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
-          "typeVersion": 1.3,
-          "position": [-288, -896]
-        },
-        {
-          "parameters": {
-            "operation": "send",
-            "phoneNumberId": "=1431351056730761",
-            "recipientPhoneNumber": "=542805123245",
-            "textBody": "={{ $json.output }}",
-            "additionalFields": {}
-          },
-          "id": "11e40102-0bd4-4526-9494-80b710455c28",
-          "name": "La Respuesta",
-          "type": "n8n-nodes-base.whatsApp",
-          "typeVersion": 1,
-          "position": [-304, -1168],
-          "webhookId": "5178caf6-05f7-4194-aa9f-382abc448f63",
-          "credentials": {
-            "whatsAppApi": {
-              "id": "peq4S8LR13LTyF3j",
-              "name": "Unnamed credential"
-            }
-          }
-        },
-        {
-          "parameters": {
-            "operation": "send",
-            "phoneNumberId": "=1431351056730761",
-            "recipientPhoneNumber": "=542805123245",
-            "textBody": "=¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto. Por favor, escríbenos tu consulta para poder ayudarte.",
-            "additionalFields": {}
-          },
-          "id": "67b3db04-b43b-4bd0-b38a-b32d81592a2d",
-          "name": "Si nos envían un sticker, GIF o Imagen",
-          "type": "n8n-nodes-base.whatsApp",
-          "typeVersion": 1,
-          "position": [-1200, -816],
-          "webhookId": "cc02c230-7ee0-4c43-9cc8-9b86b2fd0f72",
-          "credentials": {
-            "whatsAppApi": {
-              "id": "peq4S8LR13LTyF3j",
-              "name": "Unnamed credential"
-            }
-          }
-        }
-      ],
-      "connections": {
-        "GO!": { "main": [[{ "node": "Look into your book of rules", "type": "main", "index": 0 }]] },
-        "Cohere it!": { "ai_embedding": [[{ "node": "Vectores", "type": "ai_embedding", "index": 0 }]] },
-        "in the membrane": { "ai_languageModel": [[{ "node": "Shaseki Bot", "type": "ai_languageModel", "index": 0 }]] },
-        "Look into your book of rules": { "main": [[{ "node": "Tell me what you see", "type": "main", "index": 0 }]] },
-        "Tell me what you see": { "main": [[{ "node": "Vectores", "type": "main", "index": 0 }]] },
-        "DATALOADER": { "ai_document": [[{ "node": "Vectores", "type": "ai_document", "index": 0 }]] },
-        "Don't you forget about me": { "ai_memory": [[{ "node": "Shaseki Bot", "type": "ai_memory", "index": 0 }]] },
-        "Cohere it!1": { "ai_embedding": [[{ "node": "RAG", "type": "ai_embedding", "index": 0 }]] },
-        "Mensaje Entrante": { "main": [[{ "node": "valido si es texto", "type": "main", "index": 0 }]] },
-        "valido si es texto": {
-          "main": [
-            [{ "node": "Shaseki Bot", "type": "main", "index": 0 }],
-            [{ "node": "Si nos envían un sticker, GIF o Imagen", "type": "main", "index": 0 }]
-          ]
-        },
-        "Shaseki Bot": { "main": [[{ "node": "La Respuesta", "type": "main", "index": 0 }]] },
-        "RAG": { "ai_tool": [[{ "node": "Shaseki Bot", "type": "ai_tool", "index": 0 }]] }
-      }
-    };
-
-    function triggerFileDownload(filename, content, mimeType) {
-      const blob = new Blob([content], { type: mimeType });
+    function triggerDownload(filename, content, mime) {
+      const blob = new Blob([content], { type: mime });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1887,21 +1614,71 @@ Restricciones y Reglas de Negocio:
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast('Descargando ' + filename);
     }
 
     function downloadWorkflowJSON() {
-      const jsonStr = JSON.stringify(shasekiWorkflowJSON, null, 2);
-      triggerFileDownload('workflow-agente-rag.json', jsonStr, 'application/json');
-    }
-
-    function copyWorkflowJSON() {
-      const jsonStr = JSON.stringify(shasekiWorkflowJSON, null, 2);
-      copyTextToClipboard(jsonStr, 'btn-copy-json', '<span>[ ✓ WORKFLOW JSON COPIADO AL PORTAPAPELES ]</span><span>OK</span>');
+      const wf = {
+        name: "SHASEKI - Agente Comercial RAG WhatsApp Cloud",
+        nodes: [
+          { id: "1", name: "GO!", type: "n8n-nodes-base.manualTrigger", position: [-1792, -1872], parameters: {} },
+          { id: "2", name: "Look into your book of rules", type: "n8n-nodes-base.googleDrive", position: [-1552, -1696], parameters: { operation: "download" } },
+          { id: "3", name: "Tell me what you see", type: "n8n-nodes-base.extractFromFile", position: [-1296, -1792], parameters: { operation: "text" } },
+          { id: "4", name: "Vectores", type: "@n8n/n8n-nodes-langchain.vectorStoreInMemory", position: [-912, -1776], parameters: { mode: "insert", clearStore: true } },
+          { id: "5", name: "Mensaje Entrante", type: "n8n-nodes-base.whatsAppTrigger", position: [-1520, -1232], parameters: { updates: ["messages"] } },
+          { id: "6", name: "valido si es texto", type: "n8n-nodes-base.if", position: [-1104, -1152], parameters: {} },
+          { id: "7", name: "Shaseki Bot", type: "@n8n/n8n-nodes-langchain.agent", position: [-736, -1040], parameters: { promptType: "define", text: "={{ $json.messages[0].text.body }}" } },
+          { id: "8", name: "RAG", type: "@n8n/n8n-nodes-langchain.vectorStoreInMemory", position: [-288, -896], parameters: { mode: "retrieve-as-tool", topK: 6 } },
+          { id: "9", name: "La Respuesta", type: "n8n-nodes-base.whatsApp", position: [-304, -1168], parameters: { operation: "send", recipientPhoneNumber: "=549XXXXXXXXXX", textBody: "={{ $json.output }}" } },
+          { id: "10", name: "Si nos envían un sticker, GIF o Imagen", type: "n8n-nodes-base.whatsApp", position: [-1200, -816], parameters: { operation: "send", recipientPhoneNumber: "=549XXXXXXXXXX", textBody: "¡Hola! Por el momento nuestro asistente solo puede procesar consultas escritas en formato de texto." } }
+        ]
+      };
+      triggerDownload('workflow-agente-rag.json', JSON.stringify(wf, null, 2), 'application/json');
     }
 
     function downloadTarifarioMD() {
-      const mdContent = `# Tarifario de Servicios Creativos y Digitales - Shaseki\n\n## Parámetros Generales\n- **Hora de Trabajo:** $ 30.500 ARS\n- **Tipo de Cambio Referencia:** 1 USD = $ 1.570,00 ARS\n- **Adaptaciones:** 50% del valor nominal\n- **Gremio (Tercerizados):** 20% del valor nominal\n- **Anticipo mínimo:** 30% del valor nominal\n\n## 1. Identidad\n### Nueva Identidad Corporativa\n- **Empresa:** $ 1.861.900\n- **PyME:** $ 1.379.200\n- **Particular:** $ 896.500\n\n### Nuevo logotipo / isotipo / imagotipo / isologo\n- **Empresa:** $ 743.700\n- **PyME:** $ 550.900\n- **Particular:** $ 358.100\n\n## 7. Web\n### Diseño sitio WEB "One Page"\n- **Empresa:** $ 411.900\n- **PyME:** $ 305.100\n- **Particular:** $ 198.400\n\n### Maquetación sitio WEB "One Page"\n- **Empresa:** $ 1.192.000\n- **PyME:** $ 883.000\n- **Particular:** $ 573.900\n`;
-      triggerFileDownload('tarifario_shaseki.md', mdContent, 'text/markdown');
+      const md = [
+        "# Tarifario de Servicios Creativos y Digitales - Shaseki",
+        "",
+        "## Parámetros Generales",
+        "- **Hora de Trabajo:** $ 30.500 ARS",
+        "- **Tipo de Cambio Referencia:** 1 USD = $ 1.570,00 ARS",
+        "- **Adaptaciones:** 50% del valor nominal",
+        "- **Gremio (Tercerizados):** 20% del valor nominal",
+        "- **Anticipo mínimo:** 30% del valor nominal",
+        "",
+        "## 1. Identidad",
+        "### Nueva Identidad Corporativa",
+        "- **Empresa:** $ 1.861.900",
+        "- **PyME:** $ 1.379.200",
+        "- **Particular:** $ 896.500",
+        "",
+        "## 7. Web",
+        "### Diseño sitio WEB \"One Page\"",
+        "- **Empresa:** $ 411.900",
+        "- **PyME:** $ 305.100",
+        "- **Particular:** $ 198.400"
+      ].join("\n");
+      triggerDownload('tarifario_shaseki.md', md, 'text/markdown');
+    }
+
+    function downloadReadmeMD() {
+      const readme = [
+        "# Proyecto Final: SHASEKI — Proyecto Colectivo de Agentes para Administración de Datos (RAG en n8n)",
+        "",
+        "**Organización:** SHASEKI (Proyecto colectivo de agentes para administración de datos)",
+        "**Arquitectura:** n8n + WhatsApp Business Cloud API + Google Drive + Groq Cloud (LPU) + Cohere Embeddings",
+        "",
+        "## 1. Caso de Negocio y ROI",
+        "- **Ahorro Neto Efectivo:** 2h 15m semanales (9 horas mensuales) recuperadas para producción.",
+        "- **Límites del ROI:** Dejaría de aplicar si la operación pasara a proyectos 100% ad-hoc sin tarifario estandarizado.",
+        "",
+        "## 2. Arquitectura y Control de Errores",
+        "1. **Ingesta desacoplada:** Google Drive OAuth2 + Cohere Embeddings + Vector Store (`clearStore: true`).",
+        "2. **Control #1 (Multimedia):** Nodo `If` filtra stickers, audios e imágenes antes de invocar al LLM.",
+        "3. **Control #2 (Fallback):** Derivación determinista ante consultas fuera del tarifario."
+      ].join("\n");
+      triggerDownload('README.md', readme, 'text/markdown');
     }
   </script>
 </body>
