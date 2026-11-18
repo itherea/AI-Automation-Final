@@ -599,6 +599,118 @@
       flex-direction: column;
       gap: 20px;
     }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent-cyan);
+      cursor: pointer;
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease, background-color 0.25s ease;
+    }
+
+    /* ==================== [04] PROMPT, DOWNLOADS & FOOTER ==================== */
+    .prompt-pre {
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .dl-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 8px;
+      background: var(--glass-sub);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dl-btn:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--border-focus);
+    }
+
+    .dl-btn-primary {
+      background: rgba(52, 211, 153, 0.08);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--accent-green);
+    }
+
+    .dl-btn-primary:hover {
+      background: rgba(52, 211, 153, 0.14);
+      border-color: var(--accent-green);
+    }
+
+    .footer-minimal {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 48px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      background: rgba(15, 16, 20, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .glass-window {
       scroll-margin-top: 76px;
     }
@@ -1300,6 +1412,7 @@ Si tras ejecutar "RAG" el dato solicitado no figura en el tarifario, responde EX
     }
 
     function downloadReadmeMD() {
+      const fence = String.fromCharCode(96, 96, 96);
       const readme = [
         "# Proyecto Final: SHASEKI — Proyecto Colectivo de Agentes para Administración de Datos",
         "",
@@ -1320,9 +1433,9 @@ Si tras ejecutar "RAG" el dato solicitado no figura en el tarifario, responde EX
         "- **Manejo de Errores:** (1) Filtro `If` descarta multimedia antes del LLM; (2) Guardrail de Fallback deriva casos no contemplados.",
         "",
         "## 4. System Prompt",
-        "```text",
+        fence + "text",
         document.getElementById('prompt-source').textContent,
-        "```"
+        fence
       ].join("\n");
       saveFile('README.md', readme, 'text/markdown');
     }
